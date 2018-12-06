@@ -1,0 +1,45 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "YourProgress@webExtension.arielg.il",
+      "strict_min_version": "56.0"
+    }
+  },
+  "name": "Your Progress",
+  "version": "1.0",
+  "description": "The days are long but time marches on. Check out your progress.",
+  "author": "arielg",
+
+  "permissions": [
+    "notifications",
+    "clipboardWrite",
+    "storage"
+  ],
+
+  "icons": {
+    "16": "icons/yourProgress-16.png",
+    "32": "icons/yourProgress-32.png",
+    "48": "icons/yourProgress-48.png"
+  },
+
+  "web_accessible_resources": [
+  ],
+
+  "browser_action": {
+    "browser_style": false,
+    "default_title": "Your Progress",
+    "default_icon": {
+      "16": "icons/yourProgress-16.png",
+      "32": "icons/yourProgress-32.png",
+      "48": "icons/yourProgress-48.png"
+    },
+    "default_popup": "popup/popup.html"
+  },
+
+  "options_ui": {
+    "browser_style": true,
+    "page": "preferences/preferences.html"
+  }
+
+}

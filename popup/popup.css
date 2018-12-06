@@ -1,0 +1,92 @@
+:root {
+  --progress-bar-height: 12px;
+  --progress-bar-padding: 3px;
+  --footer-height: 45px;
+
+  --background-color: rgb(50, 50, 52);          /* #505050;*/
+  --background-color-diff: rgb(75, 75, 75);
+  --background-color-hover: rgb(64, 64, 64);
+  --border-color: rgb(92, 92, 97);
+  --text-color: rgb(240, 240, 240);
+}
+
+body {
+  min-width: 450px;
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.header {
+  font-family: Calibri, Tahoma, Sans;
+  font-size: 33px;
+  font-weight: bold;
+  text-align: center;
+  padding: 11px 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  height: var(--footer-height);
+  background-color: var(--background-color-diff);
+  margin-top: 15px;
+}
+
+.footer .seperator {
+  width: 1px;
+  margin: 5px 0;
+  background-color: var(--border-color);
+}
+
+.footer .button {
+  width: 45px;
+  border:none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: invert(60%);
+}
+
+#btnRefresh {
+  background-image: url("../icons/refresh.svg");
+}
+
+#btnPreferences {
+  background-image: url("../icons/preferences.svg");
+}
+
+.button:hover {
+  background-color: var(--background-color-hover);
+  filter: invert(0%);
+}
+
+.button:active {
+	filter: invert(100%);
+}
+
+.progressBarContainer {
+  padding: 10px 20px;
+}
+
+.progressBarTexts {
+  display: flex;
+  justify-content: space-between;
+  font-family: Tahoma, Sans;
+  font-size: 13.2px;
+  font-weight: normal;
+}
+
+.progressBar {
+  background-color: black;
+  border-radius: calc( var(--progress-bar-height) / 2 + var(--progress-bar-padding));   /*13px; /* (height of inner div) / 2 + padding */
+  padding: var(--progress-bar-padding);
+  margin: 2px 0;
+}
+
+.progressBar>.progressBarInner {
+  background-color: orange;
+  width: 0%;            /* adjusted with JavaScript */
+  height: var(--progress-bar-height);
+  border-radius: calc( var(--progress-bar-height) / 2);       /*10px;*/
+}

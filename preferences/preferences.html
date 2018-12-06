@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="preferences.css"/>
+	<link rel="stylesheet" href="datepicker-master/datepicker.css"/>
+	<script src="prefs.js"></script>
+	<script src="preferences.js"></script>
+	<script src="datepicker-master/datepicker.js"></script>
+</head>
+
+<body>
+
+	<label class="caption">Options</label>
+	<div class="prefSeperator"></div>
+
+	<div class="preference">
+		<label class="preferenceLabel">This Life Expectancy&nbsp;<span id="lifeExpectancyInfo" class="helpInfo">?</span></label>
+	</div>
+
+    <div class="preference subPref">
+        <label class="preferenceLabel">Geographic location:</label>
+        <div class="preferenceControl">
+            <select name="geoLocation" id="geoLocation"></select>
+        </div>
+	</div>
+	<div class="prefSeperator"></div>
+
+    <div class="preference subPref">
+        <label class="preferenceLabel">Date of birth:</label>
+        <div class="preferenceControl">
+            <input type="text" id="dateOfBirth" class="datepicker" placeholder="yyyy-mm-dd"/>
+        </div>
+	</div>
+	<div class="prefSeperator"></div>
+
+    <div class="preference subPref">
+            <label class="preferenceLabel">Gender:</label>
+            <div class="preferenceControl">
+				<select name="gender" id="gender">
+					<option value="bothSexes">Any</option>
+					<option value="male">Male</option>
+					<option value="female">Female</option>
+				</select>
+            </div>
+        </div>
+    <div class="prefSeperator"></div>
+
+	<div class="preference">
+		<label></label>
+		<div class="preferenceControl">
+            <button type="button" class="controlButton" id="btnReloadExtension">Reload Extension</button>
+			<button type="button" class="controlButton" id="btnRestoreDefaults">Restore Defaults</button>
+		</div>
+	</div>
+    <br/>
+    <p class="annotation">&#10033;&nbsp;Clicking <b>Reload Extension</b> may require reloading this page.</p>
+
+</body>
+
+</html>
