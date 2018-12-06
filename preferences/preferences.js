@@ -36,7 +36,7 @@ let preferences = (function() {
 		window.removeEventListener("unload", onUnload);
 
 		m_elmGeoLocation.removeEventListener("change", onChangeGeoLocation);
-		m_elmDateOfBirth.removeEventListener("blur", onBlurDateOfBirth);
+		m_elmDateOfBirth.removeEventListener("change", onChangeDateOfBirth);
 		m_elmGender.removeEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.removeEventListener("click", onClickBtnReloadExtension);
@@ -48,7 +48,7 @@ let preferences = (function() {
 
 		// save preferences when changed
 		m_elmGeoLocation.addEventListener("change", onChangeGeoLocation);
-		m_elmDateOfBirth.addEventListener("blur", onBlurDateOfBirth);
+		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth, true);
 		m_elmGender.addEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.addEventListener("click", onClickBtnReloadExtension);
@@ -94,17 +94,17 @@ let preferences = (function() {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onBlurDateOfBirth(event) {
+	function onChangeDateOfBirth(event) {
 
-		if(isValidBirthDate(m_elmDateOfBirth.value)) {
-			prefs.setDateOfBirth(m_elmDateOfBirth.value);
-		} else {
-			prefs.getDateOfBirth().then((value) => {
+		prefs.getDateOfBirth().then((value) => {
+
+			if(isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
+				prefs.setDateOfBirth(m_elmDateOfBirth.value);
+			} else {
 				m_elmDateOfBirth.value = value;
-			});
-		}
-
-		flashDateOfBirthElement();
+			}
+			flashDateOfBirthElement();
+		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

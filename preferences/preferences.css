@@ -187,5 +187,6 @@ input[type="checkbox"].disabled {
 }
 
 #dateOfBirth {
+  background-color: #e5e5e5;
   border: 1px solid #7a7a7a;
 }

@@ -4,10 +4,8 @@
 <head>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" href="preferences.css"/>
-	<link rel="stylesheet" href="datepicker-master/datepicker.css"/>
 	<script src="prefs.js"></script>
 	<script src="preferences.js"></script>
-	<script src="datepicker-master/datepicker.js"></script>
 </head>
 
 <body>
@@ -28,9 +26,9 @@
 	<div class="prefSeperator"></div>
 
     <div class="preference subPref">
-        <label class="preferenceLabel">Date of birth:</label>
+        <label class="preferenceLabel">Date of birth:&nbsp;<span title="Must be a past date in the format of 'yyyy-mm-dd'." class="helpInfo">?</span></label>
         <div class="preferenceControl">
-            <input type="text" id="dateOfBirth" class="datepicker" placeholder="yyyy-mm-dd"/>
+            <input type="text" id="dateOfBirth" placeholder="yyyy-mm-dd"/>
         </div>
 	</div>
 	<div class="prefSeperator"></div>

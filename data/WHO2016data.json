@@ -2,7 +2,7 @@
   {
     "metaData": [
       {
-        "description": "The 'This Life' progress is calculated using data from the 2016 World Health Statistics published in 2018 - Life expectancy at birth (years).",
+        "description": "The 'This Life' progress bar is calculated using the data from the 2016 World Health Statistics published by the Global Health Observatory (GHO) in 2018 - Life expectancy at birth (years).",
         "source": "http://who.int/entity/gho/publications/world_health_statistics/2018/en/index.html"
       }
     ]
