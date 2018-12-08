@@ -10,8 +10,6 @@ let preferences = (function() {
 	let m_elmBtnReloadExtension;
 	let m_elmBtnRestoreDefaults;
 
-	let m_txtHelpInfoLifeExpectancy;
-
 	document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
 	window.addEventListener("unload", onUnload);
 
@@ -37,6 +35,7 @@ let preferences = (function() {
 
 		m_elmGeoLocation.removeEventListener("change", onChangeGeoLocation);
 		m_elmDateOfBirth.removeEventListener("change", onChangeDateOfBirth);
+		m_elmDateOfBirth.removeEventListener("keydown", onKeyDownDateOfBirth);
 		m_elmGender.removeEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.removeEventListener("click", onClickBtnReloadExtension);
@@ -48,7 +47,8 @@ let preferences = (function() {
 
 		// save preferences when changed
 		m_elmGeoLocation.addEventListener("change", onChangeGeoLocation);
-		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth, true);
+		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth);
+		m_elmDateOfBirth.addEventListener("keyup", onKeyDownDateOfBirth, false);
 		m_elmGender.addEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.addEventListener("click", onClickBtnReloadExtension);
@@ -64,7 +64,6 @@ let preferences = (function() {
 		gettingGeoLocation.then((value) => {
 			creatingSelect.then(() => {
 				m_elmGeoLocation.value = value;
-				m_elmLifeExpectancyInfo.title = m_txtHelpInfoLifeExpectancy;
 				setTimeout(() => {
 					flashGeoLocationElement();
 				}, 500);
@@ -98,13 +97,25 @@ let preferences = (function() {
 
 		prefs.getDateOfBirth().then((value) => {
 
-			if(isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
+			if(utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
 				prefs.setDateOfBirth(m_elmDateOfBirth.value);
 			} else {
 				m_elmDateOfBirth.value = value;
 			}
 			flashDateOfBirthElement();
 		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onKeyDownDateOfBirth(event) {
+
+		let val = m_elmDateOfBirth.value;
+
+		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(val)) {
+			m_elmDateOfBirth.value += "-";
+		}
+		flashDateOfBirthElement();
+		window.close();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +162,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function flashDateOfBirthElement() {
 
-		if(!isValidBirthDate(m_elmDateOfBirth.value)) {
+		if(!utils.isValidBirthDate(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.classList.add("flash");
 		} else {
 			m_elmDateOfBirth.classList.remove("flash");
@@ -171,12 +182,17 @@ let preferences = (function() {
 				m_elmGeoLocation.removeChild(m_elmGeoLocation.firstChild);
 			}
 
-			getWHODataAsJson().then((jsonText) => {
+			// get WHO json data from file
+			utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
 
 				let elmOption = createTagOption(prefs.PREF_DEF_GEO_LOCATION_VALUE, "-Select geographic location-");
 				m_elmGeoLocation.appendChild(elmOption);
 
 				let whoData = JSON.parse(jsonText);
+
+				// also init the help info
+				m_elmLifeExpectancyInfo.title = whoData.description + "\u000d\u000dSource:\u000d" + whoData.source;
+
 				createSelectGeoLocationElement(whoData);
 
 				resolve();
@@ -185,49 +201,36 @@ let preferences = (function() {
 	}
 
     ////////////////////////////////////////////////////////////////////////////////////
-    function getWHODataAsJson() {
-
-		return new Promise((resolve) => {
-
-			let xhr = new XMLHttpRequest();
-
-			xhr.overrideMimeType("application/json");
-			xhr.open("GET", "/data/WHO2016data.json");
-			xhr.onload = function () {
-				if (xhr.readyState === xhr.DONE && xhr.status === 200) {
-					resolve(xhr.responseText);
-				}
-			};
-			xhr.send();
-		});
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////
     function createSelectGeoLocationElement(whoData) {
 
 		let node, name;
 		let elmOption;
-
 		let specialItems = ["Global", "Region"];
 
-        for(let idx in whoData) {
+        for(let n in whoData) {
 
-			node = whoData[idx];
-
-            if(node.hasOwnProperty("metaData")) {
-
-				m_txtHelpInfoLifeExpectancy = node.metaData[0].description + "\u000d\u000dSource:\u000d" + node.metaData[0].source;
-
-			} else if(node.hasOwnProperty("name")) {
-
-				name = node.name;
-
-				elmOption = createTagOption(name, (specialItems.some(el => name.includes(el)) ? "[ " + name + " ]" : name));
-				m_elmGeoLocation.appendChild(elmOption);
-
-			} else {
-                createSelectGeoLocationElement(node);
+            if(!whoData.hasOwnProperty(n)) {
+                continue;
             }
+
+            node = whoData[n];
+
+            if (typeof node === 'object') {
+
+                if(node.hasOwnProperty("name")) {
+
+					// only nodes with values
+					if(node.bothSexes !== "-") {
+
+						name = node.name;
+
+						elmOption = createTagOption(name, (specialItems.some(el => new RegExp("\\b" + el + "\\b").test(name)) ? "[ " + name + " ]" : name));
+						m_elmGeoLocation.appendChild(elmOption);
+					}
+                } else {
+                    createSelectGeoLocationElement(node);
+                }
+			}
         }
 	}
 
@@ -237,16 +240,6 @@ let preferences = (function() {
 		elm.value = value;
 		elm.innerHTML = text;
 		return elm;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////
-	function isValidBirthDate(value) {
-
-		let dateVal = new Date(value);
-
-		console.log("[Sage-Like]", dateVal);
-
-		return (dateVal !== undefined && !isNaN(dateVal) && (dateVal instanceof Date) && dateVal < (new Date()));
 	}
 
 })();

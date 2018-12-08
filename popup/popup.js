@@ -13,7 +13,6 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
 
-
         m_elmBtnRefresh = document.getElementById("btnRefresh");
         m_elmBtnPreferences = document.getElementById("btnPreferences");
 
@@ -30,7 +29,6 @@ let preferences = (function() {
 
         m_elmBtnRefresh.removeEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.removeEventListener("click", onClickPreferences, true);
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -55,17 +53,45 @@ let preferences = (function() {
 
         // +++ Year
         details = {
-            total: (isLeapYear(now.getFullYear()) ? 366 : 356),                            // days in this year
+            total: (isLeapYear(now.getFullYear()) ? 366 : 365),                            // days in this year
             elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / 86400000),    // days elapsed
         };
         setProgressbar(document.getElementById("pBarYear"), details);
 
         // +++ Life
-        details = {
-            total: 80.3,
-            elapsed: 58,
-        };
-        setProgressbar(document.getElementById("pBarLife"), details);
+        let gettingGeoLoc = prefs.getGeoLocation();
+        let gettingDateOfBirth = prefs.getDateOfBirth();
+        let gettingGender = prefs.getGender();
+
+        gettingGeoLoc.then((geoLocation) => {
+            gettingDateOfBirth.then((dateOfBirth) => {
+                gettingGender.then((gender) => {
+
+                    if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
+
+                        utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
+
+                            let whoData = JSON.parse(jsonText);
+                            let nodes = getLifeExpectancyNode(geoLocation, whoData);
+
+                            let years = Object.getOwnPropertyDescriptor(nodes[0], gender);
+
+                            details = {
+                                total: years.value * 365,
+                                elapsed: Math.floor((now - new Date(dateOfBirth)) / 86400000),       // ignoring leap years
+                            };
+                            setProgressbar(document.getElementById("pBarLife"), details);
+                        });
+
+                    } else {
+                        setProgressbar(document.getElementById("pBarLife"));
+                    }
+
+
+                });
+            });
+        });
+
 
     }
 
@@ -73,16 +99,53 @@ let preferences = (function() {
     function setProgressbar(elmProgressBar, details) {
 
         if(elmProgressBar) {
+
             let elmValue = elmProgressBar.querySelector(".progressBarTexts > .progressBarValue");
             let elmInner = elmProgressBar.querySelector(".progressBar > .progressBarInner");
-            elmValue.textContent = elmInner.style.width = Math.round(details.elapsed * 100 / details.total) + "%";
+            let elmPBar = elmProgressBar.querySelector(".progressBar");
+
+            if(details === undefined || details === null) {
+
+                elmPBar.classList.add("optionsNotSet");
+                elmValue.textContent = "-";
+                elmInner.style.width = "0%";
+                utils.blinkElement(m_elmBtnPreferences, m_elmBtnPreferences.style.visibility, 200, 2500)
+            } else {
+
+                elmPBar.classList.remove("optionsNotSet");
+                elmInner.textContent = "";
+                elmValue.textContent = elmInner.style.width = Math.min(Math.round(details.elapsed * 100 / details.total), 100) + "%";
+            }
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
     function isLeapYear(year) {
         return year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0);
-        //total = ((new Date(now.getFullYear()+1, 0, 1)) - (new Date(now.getFullYear(), 0, 1))) / 86400000;
+    }
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function getLifeExpectancyNode(name, whoData) {
+
+        let node, nodes = [];
+
+        for(let n in whoData) {
+
+            if(!whoData.hasOwnProperty(n)) {
+                continue;
+            }
+
+            node = whoData[n];
+
+            if (typeof node === 'object') {
+                if(node.hasOwnProperty("name") && node.name === name) {
+                    nodes.push(node);
+                } else {
+                    nodes = nodes.concat(getLifeExpectancyNode(name, node));
+                }
+            }
+        }
+        return nodes;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////

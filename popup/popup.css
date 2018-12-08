@@ -84,9 +84,33 @@ body {
   margin: 2px 0;
 }
 
-.progressBar>.progressBarInner {
+.progressBar > .progressBarInner {
   background-color: orange;
   width: 0%;            /* adjusted with JavaScript */
   height: var(--progress-bar-height);
   border-radius: calc( var(--progress-bar-height) / 2);       /*10px;*/
+}
+
+.progressBar > .notSetTextInner {
+  display: none;
+  background-color: gray;
+  color: lightgray;
+  height: var(--progress-bar-height);
+  font-family: "Segoe UI";
+  font-size: 9pt;
+  line-height: 8pt;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.progressBar.optionsNotSet {
+  background-color: gray;
+}
+
+.progressBar.optionsNotSet > .progressBarInner {
+  display: none;
+}
+
+.progressBar.optionsNotSet > .notSetTextInner {
+  display: block;
 }

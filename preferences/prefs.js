@@ -4,7 +4,7 @@ let prefs = (function() {
 
 	// user preferences
 
-	const PREF_DEF_GEO_LOCATION_VALUE = "_geoLocationNotSet_";
+	const PREF_DEF_GEO_LOCATION_VALUE = globals.GEO_LOCATION_NOT_SET;
 	const PREF_DEF_DATE_OF_BIRTH_VALUE = "";
 	const PREF_DEF_GENDER_VALUE = "bothSexes";
 
