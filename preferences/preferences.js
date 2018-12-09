@@ -35,7 +35,7 @@ let preferences = (function() {
 
 		m_elmGeoLocation.removeEventListener("change", onChangeGeoLocation);
 		m_elmDateOfBirth.removeEventListener("change", onChangeDateOfBirth);
-		m_elmDateOfBirth.removeEventListener("keydown", onKeyDownDateOfBirth);
+		m_elmDateOfBirth.removeEventListener("keyup", onKeyUpDateOfBirth);
 		m_elmGender.removeEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.removeEventListener("click", onClickBtnReloadExtension);
@@ -48,7 +48,7 @@ let preferences = (function() {
 		// save preferences when changed
 		m_elmGeoLocation.addEventListener("change", onChangeGeoLocation);
 		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth);
-		m_elmDateOfBirth.addEventListener("keyup", onKeyDownDateOfBirth, false);
+		m_elmDateOfBirth.addEventListener("keyup", onKeyUpDateOfBirth);
 		m_elmGender.addEventListener("change", onChangeGender);
 
 		m_elmBtnReloadExtension.addEventListener("click", onClickBtnReloadExtension);
@@ -107,15 +107,12 @@ let preferences = (function() {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onKeyDownDateOfBirth(event) {
+	function onKeyUpDateOfBirth(event) {
 
-		let val = m_elmDateOfBirth.value;
-
-		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(val)) {
+		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.value += "-";
 		}
 		flashDateOfBirthElement();
-		window.close();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

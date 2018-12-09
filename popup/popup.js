@@ -2,13 +2,11 @@
 
 let preferences = (function() {
 
-    let m_whoData;
-
     let m_elmBtnRefresh;
     let m_elmBtnPreferences;
 
-	document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
-	window.addEventListener("unload", onUnload);
+    document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
+    window.addEventListener("unload", onUnload);
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
@@ -102,18 +100,17 @@ let preferences = (function() {
 
             let elmValue = elmProgressBar.querySelector(".progressBarTexts > .progressBarValue");
             let elmInner = elmProgressBar.querySelector(".progressBar > .progressBarInner");
-            let elmPBar = elmProgressBar.querySelector(".progressBar");
+            let elmPrgBar = elmProgressBar.querySelector(".progressBar");
 
             if(details === undefined || details === null) {
 
-                elmPBar.classList.add("optionsNotSet");
+                elmPrgBar.classList.add("optionsNotSet");
                 elmValue.textContent = "-";
                 elmInner.style.width = "0%";
-                utils.blinkElement(m_elmBtnPreferences, m_elmBtnPreferences.style.visibility, 200, 2500)
+                utils.blinkElement(m_elmBtnPreferences, m_elmBtnPreferences.style.visibility, 200, 1600)
             } else {
 
-                elmPBar.classList.remove("optionsNotSet");
-                elmInner.textContent = "";
+                elmPrgBar.classList.remove("optionsNotSet");
                 elmValue.textContent = elmInner.style.width = Math.min(Math.round(details.elapsed * 100 / details.total), 100) + "%";
             }
         }
