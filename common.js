@@ -45,14 +45,14 @@ let utils = (function() {
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function blinkElement(elm, orgVisibility, interval, duration) {
+	function blinkElement(elm, interval, duration) {
 
-		elm.style.visibility = (elm.style.visibility === "hidden" ? orgVisibility : "hidden");
+		elm.style.opacity = (elm.style.opacity ^ 1).toString();		// bitwise flip
 
 		if(duration > 0) {
-			setTimeout(blinkElement, interval, elm, orgVisibility, interval, duration-interval);
+			setTimeout(() => blinkElement(elm, interval, duration-interval), interval);
 		} else {
-			elm.style.visibility = orgVisibility;
+			elm.style.opacity = "1";
 		}
 	}
 

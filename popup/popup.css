@@ -3,10 +3,13 @@
   --progress-bar-padding: 3px;
   --footer-height: 45px;
 
-  --background-color: rgb(50, 50, 52);          /* #505050;*/
-  --background-color-diff: rgb(75, 75, 75);
-  --background-color-hover: rgb(64, 64, 64);
-  --border-color: rgb(92, 92, 97);
+  --background-color: rgb(60, 60, 62);          /* #505050;*/
+  --background-color-diff: rgb(85, 85, 85);
+  --background-color-hover: rgb(74, 74, 74);
+
+  --background-color-options-not-set: rgb(179, 179, 179);
+  --color-options-not-set: rgb(194, 0, 0);
+  --border-color: rgb(102, 102, 107);
   --text-color: rgb(240, 240, 240);
 }
 
@@ -93,8 +96,8 @@ body {
 
 .progressBar > .notSetTextInner {
   display: none;
-  background-color: gray;
-  color: lightgray;
+  background-color: var(--background-color-options-not-set);
+  color: var(--color-options-not-set);
   height: var(--progress-bar-height);
   font-family: "Segoe UI";
   font-size: 9pt;
@@ -103,8 +106,22 @@ body {
   text-align: center;
 }
 
+.progressBar > .notSetTextInner > .notSetTextImg,
+.progressBar > .notSetTextInner > .optionsImg {
+  height: var(--progress-bar-height);
+  width: var(--progress-bar-height);
+}
+
+.progressBar > .notSetTextInner > .notSetTextImg {
+  background: transparent url("../icons/exclamation.svg") no-repeat center/100%;
+}
+
+.progressBar > .notSetTextInner > .optionsImg {
+  background: transparent url("../icons/preferences.svg") no-repeat center/100%;
+}
+
 .progressBar.optionsNotSet {
-  background-color: gray;
+  background-color: var(--background-color-options-not-set);
 }
 
 .progressBar.optionsNotSet > .progressBarInner {
@@ -112,5 +129,6 @@ body {
 }
 
 .progressBar.optionsNotSet > .notSetTextInner {
-  display: block;
+  display: flex;
+  justify-content: center;
 }

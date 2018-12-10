@@ -34,6 +34,9 @@ let preferences = (function() {
 
         let details;
         let now = new Date();
+        let millisecInDay = 86400000;
+        let millisecInYear = 31536000000;       // ignoring leap years
+
 
         // +++ Day
         details = {
@@ -52,45 +55,42 @@ let preferences = (function() {
         // +++ Year
         details = {
             total: (isLeapYear(now.getFullYear()) ? 366 : 365),                            // days in this year
-            elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / 86400000),    // days elapsed
+            elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / millisecInDay),    // days elapsed
         };
         setProgressbar(document.getElementById("pBarYear"), details);
 
         // +++ Life
         let gettingGeoLoc = prefs.getGeoLocation();
         let gettingDateOfBirth = prefs.getDateOfBirth();
-        let gettingGender = prefs.getGender();
 
         gettingGeoLoc.then((geoLocation) => {
             gettingDateOfBirth.then((dateOfBirth) => {
-                gettingGender.then((gender) => {
 
-                    if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
+                if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
 
-                        utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
+                    let gettingGender = prefs.getGender();
+                    let gettingJsonText = utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA);
+
+                    gettingGender.then((gender) => {
+                        gettingJsonText.then((jsonText) => {
 
                             let whoData = JSON.parse(jsonText);
                             let nodes = getLifeExpectancyNode(geoLocation, whoData);
-
                             let years = Object.getOwnPropertyDescriptor(nodes[0], gender);
 
                             details = {
-                                total: years.value * 365,
-                                elapsed: Math.floor((now - new Date(dateOfBirth)) / 86400000),       // ignoring leap years
+                                total: years.value,                                                     // expectancy years
+                                elapsed: Math.floor((now - new Date(dateOfBirth)) / millisecInYear),    // years elapsed - ignoring leap years
                             };
                             setProgressbar(document.getElementById("pBarLife"), details);
                         });
+                    });
 
-                    } else {
-                        setProgressbar(document.getElementById("pBarLife"));
-                    }
-
-
-                });
+                } else {
+                    setProgressbar(document.getElementById("pBarLife"));
+                }
             });
         });
-
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -103,13 +103,11 @@ let preferences = (function() {
             let elmPrgBar = elmProgressBar.querySelector(".progressBar");
 
             if(details === undefined || details === null) {
-
                 elmPrgBar.classList.add("optionsNotSet");
                 elmValue.textContent = "-";
                 elmInner.style.width = "0%";
-                utils.blinkElement(m_elmBtnPreferences, m_elmBtnPreferences.style.visibility, 200, 1600)
+                setTimeout(() => utils.blinkElement(m_elmBtnPreferences, 200, 2000), 750);
             } else {
-
                 elmPrgBar.classList.remove("optionsNotSet");
                 elmValue.textContent = elmInner.style.width = Math.min(Math.round(details.elapsed * 100 / details.total), 100) + "%";
             }

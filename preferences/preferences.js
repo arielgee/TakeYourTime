@@ -112,6 +112,10 @@ let preferences = (function() {
 		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.value += "-";
 		}
+
+		if(utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
+			prefs.setDateOfBirth(m_elmDateOfBirth.value);
+		}
 		flashDateOfBirthElement();
 	}
 
