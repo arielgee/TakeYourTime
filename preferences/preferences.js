@@ -2,6 +2,8 @@
 
 let preferences = (function() {
 
+	let m_elmDayStart;
+	let m_elmDayEnd;
 	let m_elmGeoLocation;
 	let m_elmDateOfBirth;
 	let m_elmGender;
@@ -16,6 +18,8 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
 
+		m_elmDayStart = document.getElementById("dayStart");
+		m_elmDayEnd = document.getElementById("dayEnd");
 		m_elmGeoLocation = document.getElementById("geoLocation");
 		m_elmDateOfBirth = document.getElementById("dateOfBirth");
 		m_elmGender = document.getElementById("gender");
@@ -33,6 +37,8 @@ let preferences = (function() {
 		document.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
 		window.removeEventListener("unload", onUnload);
 
+		m_elmDayStart.removeEventListener("change", onChangeDayStart);
+		m_elmDayEnd.removeEventListener("change", onChangeDayEnd);
 		m_elmGeoLocation.removeEventListener("change", onChangeGeoLocation);
 		m_elmDateOfBirth.removeEventListener("change", onChangeDateOfBirth);
 		m_elmDateOfBirth.removeEventListener("keyup", onKeyUpDateOfBirth);
@@ -46,6 +52,8 @@ let preferences = (function() {
 	function addEventListeners() {
 
 		// save preferences when changed
+		m_elmDayStart.addEventListener("change", onChangeDayStart);
+		m_elmDayEnd.addEventListener("change", onChangeDayEnd);
 		m_elmGeoLocation.addEventListener("change", onChangeGeoLocation);
 		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth);
 		m_elmDateOfBirth.addEventListener("keyup", onKeyUpDateOfBirth);
@@ -57,6 +65,14 @@ let preferences = (function() {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function getSavedPreferences() {
+
+		prefs.getDayStart().then((value) => {
+			m_elmDayStart.value = value;
+		});
+
+		prefs.getDayEnd().then((value) => {
+			m_elmDayEnd.value = value;
+		});
 
 		let gettingGeoLocation = prefs.getGeoLocation();
 		let creatingSelect = createSelectGeoLocationElements();
@@ -85,6 +101,16 @@ let preferences = (function() {
 	//==================================================================================
 	//=== Event Listeners
 	//==================================================================================
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeDayStart(event) {
+		prefs.setDayStart(m_elmDayStart.value);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeDayEnd(event) {
+		prefs.setDayEnd(m_elmDayEnd.value);
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeGeoLocation(event) {
@@ -136,6 +162,8 @@ let preferences = (function() {
 	function onClickBtnRestoreDefaults(event) {
 		let defPrefs = prefs.restoreDefaults();
 
+		m_elmDayStart.value = defPrefs.dayStart;
+		m_elmDayEnd.value = defPrefs.dayEnd;
 		m_elmGeoLocation.value = defPrefs.geoLocation;
 		m_elmDateOfBirth.value = defPrefs.dateOfBirth;
 		m_elmGender.value = defPrefs.gender;

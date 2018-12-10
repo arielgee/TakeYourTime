@@ -9,7 +9,7 @@
 
   "name": "Your Progress",
   "version": "1.0",
-  "description": "The days are long but time marches on. Check out your progress.",
+  "description": "Check out your progress.\n\nInspired by Andrey Azimov's \"Progress Bar OSX\" at https://www.progressbarosx.com.",
   "author": "arielg",
 
   "permissions": [

@@ -50,6 +50,12 @@ body {
   margin-right: 10px;
 }
 
+.controlTitle {
+  padding-right: 5px;
+  padding-right: 5px;
+  margin-left: 30px;
+}
+
 select {
   border: 1px solid #7a7a7a;
 }

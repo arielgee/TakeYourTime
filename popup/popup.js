@@ -39,11 +39,15 @@ let preferences = (function() {
 
 
         // +++ Day
-        details = {
-            total: 24 * 60,                                         // minutes in day
-            elapsed: now.getHours() * 60 + now.getMinutes(),        // minutes elapsed
-        };
-        setProgressbar(document.getElementById("pBarDay"), details);
+        prefs.getDayStart().then((start) => {
+            prefs.getDayEnd().then((end) => {
+                details = {
+                    total: (end - start) * 60,                                  // minutes in day
+                    elapsed: (now.getHours() - start) * 60 + now.getMinutes(),  // minutes elapsed
+                };
+                setProgressbar(document.getElementById("pBarDay"), details);
+            })
+        });
 
         // +++ Month
         details = {
@@ -60,19 +64,13 @@ let preferences = (function() {
         setProgressbar(document.getElementById("pBarYear"), details);
 
         // +++ Life
-        let gettingGeoLoc = prefs.getGeoLocation();
-        let gettingDateOfBirth = prefs.getDateOfBirth();
-
-        gettingGeoLoc.then((geoLocation) => {
-            gettingDateOfBirth.then((dateOfBirth) => {
+        prefs.getGeoLocation().then((geoLocation) => {
+            prefs.getDateOfBirth().then((dateOfBirth) => {
 
                 if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
 
-                    let gettingGender = prefs.getGender();
-                    let gettingJsonText = utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA);
-
-                    gettingGender.then((gender) => {
-                        gettingJsonText.then((jsonText) => {
+                    prefs.getGender().then((gender) => {
+                        utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
 
                             let whoData = JSON.parse(jsonText);
                             let nodes = getLifeExpectancyNode(geoLocation, whoData);
@@ -109,7 +107,7 @@ let preferences = (function() {
                 setTimeout(() => utils.blinkElement(m_elmBtnPreferences, 200, 2000), 750);
             } else {
                 elmPrgBar.classList.remove("optionsNotSet");
-                elmValue.textContent = elmInner.style.width = Math.min(Math.round(details.elapsed * 100 / details.total), 100) + "%";
+                elmValue.textContent = elmInner.style.width = Math.min(Math.max(Math.round(details.elapsed * 100 / details.total), 0), 100) + "%";
             }
         }
     }

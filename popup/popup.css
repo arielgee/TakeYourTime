@@ -132,3 +132,9 @@ body {
   display: flex;
   justify-content: center;
 }
+
+#userProgressBar .seperator {
+  height: 1px;
+  margin: 17px 100px 0 100px;
+  background-color: var(--border-color);
+}
