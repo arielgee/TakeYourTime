@@ -51,6 +51,19 @@ let preferences = (function() {
                     elapsed: (now.getHours() - start) * 60 + now.getMinutes(),  // minutes elapsed
                 };
                 setProgressbar(document.getElementById("pBarDay"), details);
+
+
+                browser.browserAction.setBadgeBackgroundColor({color: "#2f2f2f"});
+                browser.browserAction.setBadgeText({ text: "1%0" });
+                browser.browserAction.setIcon({imageData: canvasContext.getImageData(0, 0, canvas.width,canvas.height)});
+                /*
+                https://developer.mozilla.org/en-US/search?q=getImageData
+                https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas
+                https://developer.mozilla.org/en-US/docs/Web/API/RenderingContext
+                https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+                https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText
+
+                */
             })
         });
 
