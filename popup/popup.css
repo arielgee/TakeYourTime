@@ -18,6 +18,9 @@ body {
   margin: 0;
   background-color: var(--background-color);
   color: var(--text-color);
+  font-family: Tahoma, Sans;
+  font-size: 13.2px;
+  font-weight: normal;
 }
 
 .header {
@@ -51,6 +54,11 @@ body {
   filter: invert(60%);
 }
 
+#version {
+  margin: auto auto auto 10px;
+  color: rgb(153, 153, 153);
+}
+
 #btnRefresh {
   background-image: url("../icons/refresh.svg");
 }
@@ -75,9 +83,17 @@ body {
 .progressBarTexts {
   display: flex;
   justify-content: space-between;
-  font-family: Tahoma, Sans;
-  font-size: 13.2px;
-  font-weight: normal;
+}
+
+.progressBarTexts > .progressBarName {
+  max-width: 700px;
+  white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.progressBarTexts > .progressBarValue {
+  padding-left: 10px;
 }
 
 .progressBar {
@@ -133,8 +149,8 @@ body {
   justify-content: center;
 }
 
-#userProgressBar .seperator {
+#userProgressBarContainer .seperator {
   height: 1px;
-  margin: 17px 100px 0 100px;
+  margin: 10px 72px 3px 72px;
   background-color: var(--border-color);
 }

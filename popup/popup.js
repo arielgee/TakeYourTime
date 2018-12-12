@@ -2,6 +2,8 @@
 
 let preferences = (function() {
 
+    let m_elmUserProgressBarContainer;
+    let m_elmVersion;
     let m_elmBtnRefresh;
     let m_elmBtnPreferences;
 
@@ -11,12 +13,15 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
 
+        m_elmUserProgressBarContainer = document.getElementById("userProgressBarContainer");
+        m_elmVersion = document.getElementById("version");
         m_elmBtnRefresh = document.getElementById("btnRefresh");
         m_elmBtnPreferences = document.getElementById("btnPreferences");
 
         m_elmBtnRefresh.addEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.addEventListener("click", onClickPreferences, true);
 
+        m_elmVersion.textContent = "v" + browser.runtime.getManifest().version;
         refreshProgressBars();
     }
 
@@ -58,7 +63,7 @@ let preferences = (function() {
 
         // +++ Year
         details = {
-            total: (isLeapYear(now.getFullYear()) ? 366 : 365),                            // days in this year
+            total: (isLeapYear(now.getFullYear()) ? 366 : 365),                                  // days in this year
             elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / millisecInDay),    // days elapsed
         };
         setProgressbar(document.getElementById("pBarYear"), details);
@@ -89,12 +94,45 @@ let preferences = (function() {
                 }
             });
         });
+
+        // +++ User
+        prefs.getUserProgressBar().then((checked) => {
+
+            m_elmUserProgressBarContainer.style.display = (checked ? "block" : "none");
+
+            if(checked) {
+
+                prefs.getUserTitle().then((title) => {
+                    prefs.getUserStartDate().then((startDate) => {
+                        prefs.getUserEndDate().then((endDate) => {
+
+                            if(title !== "" && utils.isValidDate(startDate) && utils.isValidDate(endDate) && endDate > startDate) {
+
+                                details = {
+                                    total: ((new Date(endDate)) - (new Date(startDate))) / millisecInDay,   // days in range
+                                    elapsed: (now - new Date(startDate)) / millisecInDay,                   // days elapsed
+                                };
+                            } else {
+                                details = null;
+                            }
+                            setProgressbar(document.getElementById("pBarUser"), details, title);
+                        });
+                    });
+                });
+            }
+        });
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    function setProgressbar(elmProgressBar, details) {
+    function setProgressbar(elmProgressBar, details, name = undefined) {
 
         if(elmProgressBar) {
+
+            if(name !== undefined) {
+                let elmName = elmProgressBar.querySelector(".progressBarTexts > .progressBarName");
+                elmName.textContent = name;
+            }
 
             let elmValue = elmProgressBar.querySelector(".progressBarTexts > .progressBarValue");
             let elmInner = elmProgressBar.querySelector(".progressBar > .progressBarInner");

@@ -105,6 +105,11 @@ input[type="color"]::-moz-focus-inner {
   padding: 0;
 }
 
+input[type="text"] {
+  background-color: #e5e5e5;
+  border: 1px solid #7a7a7a;
+}
+
 .numericInput {
   border: 1px solid #7a7a7a;
   padding: 2px;
@@ -166,7 +171,10 @@ input[type="color"]::-moz-focus-inner {
 select,
 .annotation,
 .controlButton,
-#dateOfBirth {
+#dateOfBirth,
+#userTitle,
+#userStartDate,
+#userEndDate {
   background: linear-gradient(to left, transparent 50%, rgb(255, 192, 192) 50%);
   background-size: 200% 100%;
   background-position: right bottom;
@@ -180,19 +188,32 @@ select,
 
 select.flash,
 .controlButton.flash,
-#dateOfBirth.flash {
+#dateOfBirth.flash,
+#userTitle.flash,
+#userStartDate.flash,
+#userEndDate.flash {
   background-position: left bottom;
 }
 
 /* Disabled elements */
 label.disabled,
 input[type="radio"].disabled,
-input[type="checkbox"].disabled {
+input[type="checkbox"].disabled,
+input[type="text"].disabled  {
   color: darkgray;
   border-color: darkgray;
 }
 
-#dateOfBirth {
+/*  because this element is selected to 'flash' I need to overwrite the background color */
+#dateOfBirth,
+#userTitle,
+#userStartDate,
+#userEndDate {
   background-color: #e5e5e5;
-  border: 1px solid #7a7a7a;
+}
+
+#dayEnd {
+  outline: solid 0 rgb(255, 64, 64);
+  outline-offset: 0;
+  transition: outline-width 100ms linear 0s;
 }

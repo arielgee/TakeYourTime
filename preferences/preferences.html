@@ -18,35 +18,9 @@
 		<label class="preferenceLabel">This Day</label>
         <div class="preferenceControl">
 			<label for="dayStart" class="controlTitle">Starts at:</label>
-			<select name="dayStart" id="dayStart">
-				<option value="0">0</option>
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-				<option value="11">11</option>
-				<option value="11">12</option>
-			</select>
+			<select name="dayStart" id="dayStart"></select>
 			<label for="dayEnd" class="controlTitle">Ends at:</label>
-			<select name="dayEnd" id="dayEnd">
-				<option value="13">13</option>
-				<option value="14">14</option>
-				<option value="16">16</option>
-				<option value="17">17</option>
-				<option value="18">18</option>
-				<option value="19">19</option>
-				<option value="20">20</option>
-				<option value="21">21</option>
-				<option value="22">22</option>
-				<option value="23">23</option>
-				<option value="24">24</option>
-			</select>
+			<select name="dayEnd" id="dayEnd"></select>
         </div>
 	</div>
 	<div class="prefSeperator"></div>
@@ -80,6 +54,38 @@
 				<option value="female">Female</option>
 			</select>
 		</div>
+	</div>
+	<div></div>
+    <div class="prefSeperator"></div>
+
+	<div class="preference">
+		<label class="preferenceLabel">Your Process</label>
+        <div class="preferenceControl">
+            <input type="checkbox" id="userProgressBar"/>
+        </div>
+	</div>
+
+    <div class="preference subPref">
+        <label class="preferenceLabel">Title:</label>
+        <div class="preferenceControl">
+            <input type="text" id="userTitle"/>
+        </div>
+	</div>
+	<div class="prefSeperator"></div>
+
+    <div class="preference subPref">
+        <label class="preferenceLabel">Starts at:&nbsp;<span title="Must be a date in the format of 'yyyy-mm-dd'." class="helpInfo">?</span></label>
+        <div class="preferenceControl">
+            <input type="text" id="userStartDate" placeholder="yyyy-mm-dd"/>
+        </div>
+	</div>
+	<div class="prefSeperator"></div>
+
+    <div class="preference subPref">
+        <label class="preferenceLabel">Ends at:&nbsp;<span title="Must be a date in the format of 'yyyy-mm-dd'." class="helpInfo">?</span></label>
+        <div class="preferenceControl">
+            <input type="text" id="userEndDate" placeholder="yyyy-mm-dd"/>
+        </div>
 	</div>
     <div class="prefSeperator"></div>
 

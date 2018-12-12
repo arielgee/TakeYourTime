@@ -32,19 +32,22 @@ let utils = (function() {
     }
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function isValidBirthDate(value) {
+	function isValidDate(value) {
 
 		let dateVal = new Date(value);
 
 		return (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value) &&
-			dateVal !== undefined &&
-			!isNaN(dateVal)	&&
-			(dateVal instanceof Date) &&
-			dateVal < (new Date()));
+				dateVal !== undefined &&
+				!isNaN(dateVal) &&
+				(dateVal instanceof Date));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function isValidBirthDate(value) {
+		return (isValidDate(value) && (new Date(value)) < (new Date()));
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function blinkElement(elm, interval, duration) {
 
 		elm.style.opacity = (elm.style.opacity ^ 1).toString();		// bitwise flip
@@ -56,9 +59,33 @@ let utils = (function() {
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function disableElementTree(elm, value) {
+
+		if (elm.nodeType !== Node.ELEMENT_NODE) {
+			return;
+		}
+
+		for (let i in elm.children) {
+			disableElementTree(elm.children[i], value);
+		}
+
+		if (elm.disabled !== undefined) {
+			elm.disabled = value;
+		}
+
+		if (value === true) {
+			elm.classList.add("disabled");
+		} else {
+			elm.classList.remove("disabled");
+		}
+	};
+
     return {
-        getJsonTextData: getJsonTextData,
+		getJsonTextData: getJsonTextData,
+		isValidDate: isValidDate,
 		isValidBirthDate: isValidBirthDate,
 		blinkElement: blinkElement,
+		disableElementTree: disableElementTree,
     }
 })();

@@ -1,5 +1,5 @@
 {
-  "description": "The 'This Life' progress bar is calculated using the data from the 2015 World Health Statistics published by the Global Health Observatory (GHO) in 2016 - Life expectancy at birth.",
+  "description": "The 'This Life' progress bar is calculated using the data from the 2015 World Health Statistics published by the Global Health Observatory (GHO) in 2016 - Life expectancy at birth for geographic location.",
   "source": "http://who.int/entity/gho/publications/world_health_statistics/2016/en/index.html",
   "data": [
     {

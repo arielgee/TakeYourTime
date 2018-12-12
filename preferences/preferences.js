@@ -8,6 +8,10 @@ let preferences = (function() {
 	let m_elmDateOfBirth;
 	let m_elmGender;
 	let m_elmLifeExpectancyInfo;
+	let m_elmUserProgressBar;
+	let m_elmUserTitle;
+	let m_elmUserStartDate;
+	let m_elmUserEndDate;
 
 	let m_elmBtnReloadExtension;
 	let m_elmBtnRestoreDefaults;
@@ -24,6 +28,10 @@ let preferences = (function() {
 		m_elmDateOfBirth = document.getElementById("dateOfBirth");
 		m_elmGender = document.getElementById("gender");
 		m_elmLifeExpectancyInfo = document.getElementById("lifeExpectancyInfo");
+		m_elmUserProgressBar = document.getElementById("userProgressBar");
+		m_elmUserTitle = document.getElementById("userTitle");
+		m_elmUserStartDate = document.getElementById("userStartDate");
+		m_elmUserEndDate = document.getElementById("userEndDate");
 
 		m_elmBtnReloadExtension = document.getElementById("btnReloadExtension");
 		m_elmBtnRestoreDefaults = document.getElementById("btnRestoreDefaults");
@@ -43,6 +51,13 @@ let preferences = (function() {
 		m_elmDateOfBirth.removeEventListener("change", onChangeDateOfBirth);
 		m_elmDateOfBirth.removeEventListener("keyup", onKeyUpDateOfBirth);
 		m_elmGender.removeEventListener("change", onChangeGender);
+		m_elmUserProgressBar.removeEventListener("change", onChangeUserProgressBar);
+		m_elmUserTitle.removeEventListener("change", onChangeUserTitle);
+		m_elmUserTitle.removeEventListener("keyup", onKeyUpUserTitle);
+		m_elmUserStartDate.removeEventListener("change", onChangeUserStartDate);
+		m_elmUserStartDate.removeEventListener("keyup", onKeyUpUserDate);
+		m_elmUserEndDate.removeEventListener("change", onChangeUserEndDate);
+		m_elmUserEndDate.removeEventListener("keyup", onKeyUpUserDate);
 
 		m_elmBtnReloadExtension.removeEventListener("click", onClickBtnReloadExtension);
 		m_elmBtnRestoreDefaults.removeEventListener("click", onClickBtnRestoreDefaults);
@@ -58,6 +73,13 @@ let preferences = (function() {
 		m_elmDateOfBirth.addEventListener("change", onChangeDateOfBirth);
 		m_elmDateOfBirth.addEventListener("keyup", onKeyUpDateOfBirth);
 		m_elmGender.addEventListener("change", onChangeGender);
+		m_elmUserProgressBar.addEventListener("change", onChangeUserProgressBar);
+		m_elmUserTitle.addEventListener("change", onChangeUserTitle);
+		m_elmUserTitle.addEventListener("keyup", onKeyUpUserTitle);
+		m_elmUserStartDate.addEventListener("change", onChangeUserStartDate);
+		m_elmUserStartDate.addEventListener("keyup", onKeyUpUserDate);
+		m_elmUserEndDate.addEventListener("change", onChangeUserEndDate);
+		m_elmUserEndDate.addEventListener("keyup", onKeyUpUserDate);
 
 		m_elmBtnReloadExtension.addEventListener("click", onClickBtnReloadExtension);
 		m_elmBtnRestoreDefaults.addEventListener("click", onClickBtnRestoreDefaults);
@@ -66,12 +88,22 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function getSavedPreferences() {
 
-		prefs.getDayStart().then((value) => {
-			m_elmDayStart.value = value;
-		});
+		createSelectHoursElements(m_elmDayStart, 0, 23);
 
-		prefs.getDayEnd().then((value) => {
-			m_elmDayEnd.value = value;
+		prefs.getDayStart().then((startHour) => {
+
+			m_elmDayStart.value = startHour;
+			createSelectHoursElements(m_elmDayEnd, parseInt(startHour)+1, 24);
+
+			prefs.getDayEnd().then((endHour) => {
+
+				if(endHour >= parseInt(startHour)+1 && endHour <= 24) {
+					m_elmDayEnd.value = endHour;
+				} else {
+					m_elmDayEnd.value = 24;
+					prefs.setDayEnd(m_elmDayEnd.value);
+				}
+			});
 		});
 
 		let gettingGeoLocation = prefs.getGeoLocation();
@@ -80,21 +112,38 @@ let preferences = (function() {
 		gettingGeoLocation.then((value) => {
 			creatingSelect.then(() => {
 				m_elmGeoLocation.value = value;
-				setTimeout(() => {
-					flashGeoLocationElement();
-				}, 500);
+				setTimeout(() => flashGeoLocationElement(), 500);
 			});
 		});
 
 		prefs.getDateOfBirth().then((value) => {
 			m_elmDateOfBirth.value = value;
-			setTimeout(() => {
-				flashDateOfBirthElement();
-			}, 500);
+			setTimeout(() => flashDateOfBirthElement(), 500);
 		});
 
 		prefs.getGender().then((value) => {
 			m_elmGender.value = value;
+		});
+
+		prefs.getUserProgressBar().then((value) => {
+			m_elmUserProgressBar.checked = value;
+			utils.disableElementTree(m_elmUserTitle.parentElement.parentElement, !value);
+			utils.disableElementTree(m_elmUserStartDate.parentElement.parentElement, !value);
+			utils.disableElementTree(m_elmUserEndDate.parentElement.parentElement, !value);
+			setTimeout(() => flashDateElement(m_elmUserStartDate), 500);
+			setTimeout(() => flashDateElement(m_elmUserEndDate), 500);
+		});
+
+		prefs.getUserTitle().then((value) => {
+			m_elmUserTitle.value = value;
+		});
+
+		prefs.getUserStartDate().then((value) => {
+			m_elmUserStartDate.value = value;
+		});
+
+		prefs.getUserEndDate().then((value) => {
+			m_elmUserEndDate.value = value;
 		});
 	}
 
@@ -104,7 +153,22 @@ let preferences = (function() {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeDayStart(event) {
+
 		prefs.setDayStart(m_elmDayStart.value);
+
+		let oldDayEndValue = m_elmDayEnd.value;
+		let dayEndFromValue = parseInt(m_elmDayStart.value) + 1
+
+		createSelectHoursElements(m_elmDayEnd, dayEndFromValue, 24);
+
+		if(oldDayEndValue >= dayEndFromValue && oldDayEndValue <= 24) {
+			m_elmDayEnd.value = oldDayEndValue;
+		} else {
+			m_elmDayEnd.value = 24;
+			m_elmDayEnd.style.outlineWidth = "4px"
+			setTimeout(() => m_elmDayEnd.style.outlineWidth = "0", 2500);
+		}
+		prefs.setDayEnd(m_elmDayEnd.value);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -151,6 +215,86 @@ let preferences = (function() {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeUserProgressBar(event) {
+
+		let checked = m_elmUserProgressBar.checked;
+
+		prefs.setUserProgressBar(checked);
+		utils.disableElementTree(m_elmUserTitle.parentElement.parentElement, !checked);
+		utils.disableElementTree(m_elmUserStartDate.parentElement.parentElement, !checked);
+		utils.disableElementTree(m_elmUserEndDate.parentElement.parentElement, !checked);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onKeyUpUserTitle(event) {
+		flashTitleElement();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeUserTitle(event) {
+
+		prefs.getUserTitle().then((oldTitle) => {
+
+			let newTitle = m_elmUserTitle.value.trim();
+
+			if(newTitle.length === 0) {
+				m_elmUserTitle.value = oldTitle;
+			} else {
+				m_elmUserTitle.value = newTitle;		// trimmed
+				prefs.setUserTitle(newTitle);
+			}
+		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onKeyUpUserDate(event) {
+
+		let elm = event.target;
+
+		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(elm.value)) {
+			elm.value += "-";
+		}
+		flashDateElement(elm);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeUserStartDate(event) {
+
+		prefs.getUserStartDate().then((startValue) => {
+
+			if(utils.isValidDate(m_elmUserStartDate.value) || m_elmUserStartDate.value === "") {
+
+				prefs.setUserStartDate(m_elmUserStartDate.value);
+
+				prefs.getUserEndDate().then((endValue) => {
+
+					if(endValue !== "" && (new Date(endValue)) <= (new Date(m_elmUserStartDate.value))) {
+						prefs.setUserEndDate(m_elmUserEndDate.value = "");
+						flashDateElement(m_elmUserEndDate);
+					}
+				});
+			} else {
+				m_elmUserStartDate.value = startValue;
+			}
+			flashDateElement(m_elmUserStartDate);
+		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeUserEndDate(event) {
+
+		prefs.getUserEndDate().then((value) => {
+
+			if(utils.isValidDate(m_elmUserEndDate.value) || m_elmUserEndDate.value === "") {
+				prefs.setUserEndDate(m_elmUserEndDate.value);
+			} else {
+				m_elmUserEndDate.value = value;
+			}
+			flashDateElement(m_elmUserEndDate);
+		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
 	function onClickBtnReloadExtension(event) {
 		setTimeout(() => {
 			browser.tabs.reload({ bypassCache: true });
@@ -167,6 +311,10 @@ let preferences = (function() {
 		m_elmGeoLocation.value = defPrefs.geoLocation;
 		m_elmDateOfBirth.value = defPrefs.dateOfBirth;
 		m_elmGender.value = defPrefs.gender;
+		m_elmUserProgressBar.value = defPrefs.userProgressBar;
+		m_elmUserTitle.value = defPrefs.userTitle;
+		m_elmUserStartDate.value = defPrefs.userStartDate;
+		m_elmUserEndDate.value = defPrefs.userEndDate;
 
 		flashGeoLocationElement();
 		flashDateOfBirthElement();
@@ -195,6 +343,45 @@ let preferences = (function() {
 			m_elmDateOfBirth.classList.add("flash");
 		} else {
 			m_elmDateOfBirth.classList.remove("flash");
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function flashTitleElement() {
+
+		if(m_elmUserTitle.value.trim().length === 0) {
+			m_elmUserTitle.classList.add("flash");
+		} else {
+			m_elmUserTitle.classList.remove("flash");
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function flashDateElement(elm) {
+
+		if(!utils.isValidDate(elm.value)) {
+			elm.classList.add("flash");
+		} else {
+			elm.classList.remove("flash");
+		}
+	}
+
+	//==================================================================================
+	//=== Day satrt/end <select> functions
+	//==================================================================================
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function createSelectHoursElements(elm, nFrom, nTo) {
+
+		while(elm.firstChild) {
+			elm.removeChild(elm.firstChild);
+		}
+
+		let elmOption;
+
+		for (let idx = nFrom; idx <= nTo ; idx++) {
+			elmOption = createTagOption(idx, idx.toString().padStart(2, "0") + ":00");
+			elm.appendChild(elmOption);
 		}
 	}
 
