@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Your Progress Popup</title>
+    <title>Take Your Time Popup</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="popup.css" />
     <script src="/common.js"></script>
@@ -11,12 +11,15 @@
 </head>
 
 <body>
-    <div class="header">Your Progress</div>
+
+    <canvas id="canvasBrowserAction" style="display:none;"></canvas>
+
+    <div class="header">Take Your Time</div>
 
     <div id="pBarDay" class="progressBarContainer">
 
         <div class="progressBarTexts">
-            <label class="progressBarName">This Day</label>
+            <label class="progressBarName">Your Day</label>
             <label class="progressBarValue">-</label>
         </div>
 
@@ -29,7 +32,7 @@
     <div id="pBarMonth" class="progressBarContainer">
 
         <div class="progressBarTexts">
-            <label class="progressBarName">This Month</label>
+            <label class="progressBarName">Your Month</label>
             <label class="progressBarValue">-</label>
         </div>
 
@@ -42,7 +45,7 @@
     <div id="pBarYear" class="progressBarContainer">
 
         <div class="progressBarTexts">
-            <label class="progressBarName">This Year</label>
+            <label class="progressBarName">Your Year</label>
             <label class="progressBarValue">-</label>
         </div>
 
@@ -55,7 +58,7 @@
     <div id="pBarLife" class="progressBarContainer">
 
         <div class="progressBarTexts">
-            <label class="progressBarName">This Life</label>
+            <label class="progressBarName">Your Life</label>
             <label class="progressBarValue">-</label>
         </div>
 

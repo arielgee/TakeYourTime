@@ -2,8 +2,6 @@
 
 let preferences = (function() {
 
-    let m_elmUserProgressBarContainer;
-    let m_elmVersion;
     let m_elmBtnRefresh;
     let m_elmBtnPreferences;
 
@@ -13,15 +11,20 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
 
-        m_elmUserProgressBarContainer = document.getElementById("userProgressBarContainer");
-        m_elmVersion = document.getElementById("version");
         m_elmBtnRefresh = document.getElementById("btnRefresh");
         m_elmBtnPreferences = document.getElementById("btnPreferences");
+
+        document.querySelectorAll(".progressBarContainer").forEach((elm, key, parent) => {
+            elm.addEventListener("mouseenter", onMouseEnterProgressBarContainer);
+            elm.addEventListener("mouseleave", onMouseLeaveProgressBarContainer);
+            elm.addEventListener("click", onClickProgressBarContainer);
+        });
 
         m_elmBtnRefresh.addEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.addEventListener("click", onClickPreferences, true);
 
-        m_elmVersion.textContent = "v" + browser.runtime.getManifest().version;
+        document.getElementById("version").textContent = "v" + browser.runtime.getManifest().version;
+
         refreshProgressBars();
     }
 
@@ -29,6 +32,12 @@ let preferences = (function() {
 	function onUnload(event) {
 		document.removeEventListener("DOMContentLoaded", onDOMContentLoaded);
         window.removeEventListener("unload", onUnload);
+
+        document.querySelectorAll(".progressBarContainer").forEach((elm, key, parent) => {
+            elm.removeEventListener("mouseenter", onMouseEnterProgressBarContainer);
+            elm.removeEventListener("mouseleave", onMouseLeaveProgressBarContainer);
+            elm.removeEventListener("click", onClickProgressBarContainer);
+        });
 
         m_elmBtnRefresh.removeEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.removeEventListener("click", onClickPreferences, true);
@@ -50,20 +59,7 @@ let preferences = (function() {
                     total: (end - start) * 60,                                  // minutes in day
                     elapsed: (now.getHours() - start) * 60 + now.getMinutes(),  // minutes elapsed
                 };
-                setProgressbar(document.getElementById("pBarDay"), details);
-
-
-                browser.browserAction.setBadgeBackgroundColor({color: "#2f2f2f"});
-                browser.browserAction.setBadgeText({ text: "1%0" });
-                browser.browserAction.setIcon({imageData: canvasContext.getImageData(0, 0, canvas.width,canvas.height)});
-                /*
-                https://developer.mozilla.org/en-US/search?q=getImageData
-                https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas
-                https://developer.mozilla.org/en-US/docs/Web/API/RenderingContext
-                https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-                https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeText
-
-                */
+                setProgressBar(document.getElementById("pBarDay"), details);
             })
         });
 
@@ -72,14 +68,14 @@ let preferences = (function() {
             total: (new Date(now.getFullYear(), now.getMonth(), 0)).getDate() * 24,    // hours in this month
             elapsed: ((now.getDate() - 1) * 24) + now.getHours(),                      // hours elapsed
         };
-        setProgressbar(document.getElementById("pBarMonth"), details);
+        setProgressBar(document.getElementById("pBarMonth"), details);
 
         // +++ Year
         details = {
             total: (isLeapYear(now.getFullYear()) ? 366 : 365),                                  // days in this year
             elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / millisecInDay),    // days elapsed
         };
-        setProgressbar(document.getElementById("pBarYear"), details);
+        setProgressBar(document.getElementById("pBarYear"), details);
 
         // +++ Life
         prefs.getGeoLocation().then((geoLocation) => {
@@ -98,12 +94,12 @@ let preferences = (function() {
                                 total: years.value,                                                     // expectancy years
                                 elapsed: Math.floor((now - new Date(dateOfBirth)) / millisecInYear),    // years elapsed - ignoring leap years
                             };
-                            setProgressbar(document.getElementById("pBarLife"), details);
+                            setProgressBar(document.getElementById("pBarLife"), details);
                         });
                     });
 
                 } else {
-                    setProgressbar(document.getElementById("pBarLife"));
+                    setProgressBar(document.getElementById("pBarLife"));
                 }
             });
         });
@@ -111,7 +107,7 @@ let preferences = (function() {
         // +++ User
         prefs.getUserProgressBar().then((checked) => {
 
-            m_elmUserProgressBarContainer.style.display = (checked ? "block" : "none");
+            document.getElementById("userProgressBarContainer").style.display = (checked ? "block" : "none");
 
             if(checked) {
 
@@ -128,7 +124,7 @@ let preferences = (function() {
                             } else {
                                 details = null;
                             }
-                            setProgressbar(document.getElementById("pBarUser"), details, title);
+                            setProgressBar(document.getElementById("pBarUser"), details, title);
                         });
                     });
                 });
@@ -138,7 +134,7 @@ let preferences = (function() {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    function setProgressbar(elmProgressBar, details, name = undefined) {
+    function setProgressBar(elmProgressBar, details, name = undefined) {
 
         if(elmProgressBar) {
 
@@ -193,6 +189,47 @@ let preferences = (function() {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
+    function onMouseEnterProgressBarContainer(event) {
+        event.target.style.outlineWidth = "1px";
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function onMouseLeaveProgressBarContainer(event) {
+        event.target.style.outlineWidth = "0";
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function onClickProgressBarContainer(event) {
+
+        let container = event.target;
+
+        while(!container.classList.contains("progressBarContainer")) {
+            container = container.parentElement;
+        }
+
+        if(container.hasAttribute("browserAction")) {
+            container.removeAttribute("browserAction");
+            browser.browserAction.setIcon( { } );
+            browser.browserAction.setTitle( { title: null } );
+        } else {
+
+            let elmInBrowserAction = document.querySelectorAll(".progressBarContainer[browserAction]");
+
+            if(elmInBrowserAction.length > 0) {
+                for(let idx in elmInBrowserAction) {
+                    if(!elmInBrowserAction.hasOwnProperty(idx)) continue;
+                    elmInBrowserAction[idx].removeAttribute("browserAction");
+                }
+            }
+
+            container.setAttribute("browserAction", "");
+            browser.browserAction.setIcon( { imageData: createPercentageImage(container.querySelector(".progressBarValue").textContent) } );
+            browser.browserAction.setTitle( { title: "Take Your Time - " + container.querySelector(".progressBarName").textContent } );
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
     function onClickRefresh(event) {
         refreshProgressBars();
     }
@@ -200,6 +237,28 @@ let preferences = (function() {
     ////////////////////////////////////////////////////////////////////////////////////
     function onClickPreferences(event) {
         browser.runtime.openOptionsPage();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function createPercentageImage(percentage) {
+
+        let bg = "#000000";
+        let fg = "#FFCF75";
+
+        const cnvs = document.getElementById("canvasBrowserAction");
+        cnvs.width = cnvs.height = 16;
+        const ctx = cnvs.getContext("2d");
+
+        // background
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, cnvs.width, cnvs.height);
+
+        // percentage text
+        ctx.fillStyle = fg;
+        ctx.font = "10pt " + (percentage === "100%" ? "Segoe UI" : "serif");
+        ctx.fillText(percentage, 0.5, 13, cnvs.width - 0.5);
+
+        return ctx.getImageData(0, 0, cnvs.width, cnvs.height);
     }
 
 })();

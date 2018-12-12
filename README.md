@@ -1,3 +1,3 @@
-# YourProgress
+# Take Your Time
 
-The days are long but time marches on. Check out your progress.
+Check out your progress.

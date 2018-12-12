@@ -2,12 +2,12 @@
   "manifest_version": 2,
   "applications": {
     "gecko": {
-      "id": "YourProgress@webExtension.arielg.il",
+      "id": "TakeYourTime@webExtension.arielg.il",
       "strict_min_version": "56.0"
     }
   },
 
-  "name": "Your Progress",
+  "name": "Take Your Time",
   "version": "1.0",
   "description": "Check out your progress.\n\nInspired by Andrey Azimov's \"Progress Bar OSX\" at https://www.progressbarosx.com.",
   "author": "arielg",
@@ -26,7 +26,7 @@
 
   "browser_action": {
     "browser_style": false,
-    "default_title": "Your Progress",
+    "default_title": "Take Your Time",
     "default_icon": {
       "16": "icons/progress-bar.svg",
       "32": "icons/progress-bar.svg",

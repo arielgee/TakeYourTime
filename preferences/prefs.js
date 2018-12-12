@@ -10,7 +10,7 @@ let prefs = (function() {
 	const PREF_DEF_DATE_OF_BIRTH_VALUE = "";
 	const PREF_DEF_GENDER_VALUE = "bothSexes";
 	const PREF_DEF_USER_PROGRESS_BAR_VALUE = false;
-	const PREF_DEF_USER_TITLE_VALUE = "This Process";
+	const PREF_DEF_USER_TITLE_VALUE = "Your Time";
 	const PREF_DEF_USER_START_DATE_VALUE = "";
 	const PREF_DEF_USER_END_DATE_VALUE = "";
 
