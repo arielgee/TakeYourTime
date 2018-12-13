@@ -11,6 +11,8 @@
   --color-options-not-set: rgb(194, 0, 0);
   --border-color: rgb(102, 102, 107);
   --text-color: rgb(240, 240, 240);
+
+  --progress-bar-text-line-height: 17px;
 }
 
 body {
@@ -79,27 +81,36 @@ body {
 .progressBarContainer {
   padding: 10px 20px;
   outline: 0 dotted #ffffff;
-  outline-offset: -2px;
-}
-
-.progressBarContainer[browserAction] {
-  outline: 1px solid darkorange !important;
+  outline-offset: -5px;
 }
 
 .progressBarTexts {
   display: flex;
   justify-content: space-between;
+  line-height: var(--progress-bar-text-line-height);
 }
 
 .progressBarTexts > .progressBarName {
   max-width: 700px;
   white-space: nowrap;
 	overflow: hidden;
-	text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 .progressBarTexts > .progressBarValue {
   padding-left: 20px;
+}
+
+.progressBarTexts .checkMarkImg {
+  height: var(--progress-bar-text-line-height);
+  width: var(--progress-bar-text-line-height);
+  background: transparent url("../icons/check-mark.svg") no-repeat center/100%;
+  display: none;
+  margin: 0 auto 0 8px;
+}
+
+.progressBarContainer.iconized .checkMarkImg {
+  display: block;
 }
 
 .progressBar {
@@ -157,6 +168,6 @@ body {
 
 #userProgressBarContainer .seperator {
   height: 1px;
-  margin: 10px 72px 3px 72px;
+  margin: 10px 72px;
   background-color: var(--border-color);
 }

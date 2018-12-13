@@ -13,6 +13,7 @@ let prefs = (function() {
 	const PREF_DEF_USER_TITLE_VALUE = "Your Time";
 	const PREF_DEF_USER_START_DATE_VALUE = "";
 	const PREF_DEF_USER_END_DATE_VALUE = "";
+	const PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE = globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET;
 
 	const PREF_DAY_START_KEY = "pref_dayStart";
 	const PREF_DAY_END_KEY = "pref_dayEnd";
@@ -23,6 +24,7 @@ let prefs = (function() {
 	const PREF_USER_TITLE_KEY = "pref_userTitle";
 	const PREF_USER_START_DATE_KEY = "pref_userStartDate";
 	const PREF_USER_END_DATE_KEY = "pref_userEndDate";
+	const PREF_ICONIZED_PROGRESS_BAR_ID_KEY = "pref_iconizedProgressBarId";
 
 	//////////////////////////////////////////////////////////////////////
 	function getDayStart() {
@@ -196,6 +198,25 @@ let prefs = (function() {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	function getIconizedProgressBarId() {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_ICONIZED_PROGRESS_BAR_ID_KEY).then((result) => {
+				resolve(result[PREF_ICONIZED_PROGRESS_BAR_ID_KEY] === undefined ? PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE : result[PREF_ICONIZED_PROGRESS_BAR_ID_KEY]);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function setIconizedProgressBarId(value) {
+
+		let obj = {};
+		obj[PREF_ICONIZED_PROGRESS_BAR_ID_KEY] = value;
+		browser.storage.local.set(obj);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function restoreDefaults() {
 		this.setDayStart(PREF_DEF_DAY_START_VALUE);
 		this.setDayEnd(PREF_DEF_DAY_END_VALUE);
@@ -206,6 +227,7 @@ let prefs = (function() {
 		this.setUserTitle(PREF_DEF_USER_TITLE_VALUE);
 		this.setUserStartDate(PREF_DEF_USER_START_DATE_VALUE);
 		this.setUserEndDate(PREF_DEF_USER_END_DATE_VALUE);
+		this.setIconizedProgressBarId(PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE);
 
 		return {
 			dayStart: PREF_DEF_DAY_START_VALUE,
@@ -217,6 +239,7 @@ let prefs = (function() {
 			userTitle: PREF_DEF_USER_TITLE_VALUE,
 			userStartDate: PREF_DEF_USER_START_DATE_VALUE,
 			userEndDate: PREF_DEF_USER_END_DATE_VALUE,
+			iconizedProgressBarId: PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE,
 		};
 	}
 
@@ -230,6 +253,7 @@ let prefs = (function() {
 		PREF_DEF_USER_TITLE_VALUE: PREF_DEF_USER_TITLE_VALUE,
 		PREF_DEF_USER_START_DATE_VALUE: PREF_DEF_USER_START_DATE_VALUE,
 		PREF_DEF_USER_END_DATE_VALUE: PREF_DEF_USER_END_DATE_VALUE,
+		PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE: PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE,
 
 		getDayStart: getDayStart,
 		setDayStart: setDayStart,
@@ -249,6 +273,8 @@ let prefs = (function() {
 		setUserStartDate: setUserStartDate,
 		getUserEndDate: getUserEndDate,
 		setUserEndDate: setUserEndDate,
+		getIconizedProgressBarId: getIconizedProgressBarId,
+		setIconizedProgressBarId: setIconizedProgressBarId,
 
 		restoreDefaults: restoreDefaults,
 	}

@@ -199,7 +199,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onKeyUpDateOfBirth(event) {
 
-		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(m_elmDateOfBirth.value)) {
+		if(event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.value += "-";
 		}
 
@@ -251,7 +251,7 @@ let preferences = (function() {
 
 		let elm = event.target;
 
-		if(event.key >= "0" && event.key <= "9" && /^[0-9]{4}(-[0-9]{2})?$/.test(elm.value)) {
+		if(event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(elm.value)) {
 			elm.value += "-";
 		}
 		flashDateElement(elm);

@@ -26,6 +26,10 @@ let preferences = (function() {
         document.getElementById("version").textContent = "v" + browser.runtime.getManifest().version;
 
         refreshProgressBars();
+
+        prefs.getIconizedProgressBarId().then((idElm) => {
+            setTimeout(() => iconizeProgressBar(document.getElementById(idElm)), 200);
+        });
     }
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +134,6 @@ let preferences = (function() {
                 });
             }
         });
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +194,6 @@ let preferences = (function() {
     ////////////////////////////////////////////////////////////////////////////////////
     function onMouseEnterProgressBarContainer(event) {
         event.target.style.outlineWidth = "1px";
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -202,31 +204,19 @@ let preferences = (function() {
     ////////////////////////////////////////////////////////////////////////////////////
     function onClickProgressBarContainer(event) {
 
-        let container = event.target;
+        let elmPBarContainer = event.target;
 
-        while(!container.classList.contains("progressBarContainer")) {
-            container = container.parentElement;
+        while(!elmPBarContainer.classList.contains("progressBarContainer")) {
+            elmPBarContainer = elmPBarContainer.parentElement;
         }
 
-        if(container.hasAttribute("browserAction")) {
-            container.removeAttribute("browserAction");
-            browser.browserAction.setIcon( { } );
-            browser.browserAction.setTitle( { title: null } );
-        } else {
+        prefs.getIconizedProgressBarId().then((idElm) => {
 
-            let elmInBrowserAction = document.querySelectorAll(".progressBarContainer[browserAction]");
-
-            if(elmInBrowserAction.length > 0) {
-                for(let idx in elmInBrowserAction) {
-                    if(!elmInBrowserAction.hasOwnProperty(idx)) continue;
-                    elmInBrowserAction[idx].removeAttribute("browserAction");
-                }
+            if(idElm !== globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET && idElm !== elmPBarContainer.id) {
+                document.getElementById(idElm).classList.remove("iconized");
             }
-
-            container.setAttribute("browserAction", "");
-            browser.browserAction.setIcon( { imageData: createPercentageImage(container.querySelector(".progressBarValue").textContent) } );
-            browser.browserAction.setTitle( { title: "Take Your Time - " + container.querySelector(".progressBarName").textContent } );
-        }
+            iconizeProgressBar(elmPBarContainer);
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -240,10 +230,38 @@ let preferences = (function() {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
+    function iconizeProgressBar(elmPBarContainer) {
+
+        if(!elmPBarContainer || elmPBarContainer === undefined) {
+            return;
+        }
+
+        let iconDetails = {};
+        let titleDetails = { title: null };
+
+        if(elmPBarContainer.classList.contains("iconized")) {
+
+            elmPBarContainer.classList.remove("iconized");
+            prefs.setIconizedProgressBarId(globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET);
+
+        } else {
+
+            elmPBarContainer.classList.add("iconized");
+            prefs.setIconizedProgressBarId(elmPBarContainer.id);
+
+            iconDetails = { imageData: createPercentageImage(elmPBarContainer.querySelector(".progressBarValue").textContent) };
+            titleDetails = { title: "Take Your Time - " + elmPBarContainer.querySelector(".progressBarName").textContent };
+        }
+
+        browser.browserAction.setIcon(iconDetails);
+        browser.browserAction.setTitle(titleDetails);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
     function createPercentageImage(percentage) {
 
-        let bg = "#000000";
-        let fg = "#FFCF75";
+        const bg = "#000000";
+        const fg = "#FFCF75";
 
         const cnvs = document.getElementById("canvasBrowserAction");
         cnvs.width = cnvs.height = 16;
@@ -253,10 +271,13 @@ let preferences = (function() {
         ctx.fillStyle = bg;
         ctx.fillRect(0, 0, cnvs.width, cnvs.height);
 
-        // percentage text
-        ctx.fillStyle = fg;
-        ctx.font = "10pt " + (percentage === "100%" ? "Segoe UI" : "serif");
-        ctx.fillText(percentage, 0.5, 13, cnvs.width - 0.5);
+        if(/^\d{1,3}%$/.test(percentage)) {
+
+            // percentage text
+            ctx.fillStyle = fg;
+            ctx.font = "10pt " + (percentage === "100%" ? "Segoe UI" : "serif");
+            ctx.fillText(percentage, 0.5, 13, cnvs.width - 0.5);
+        }
 
         return ctx.getImageData(0, 0, cnvs.width, cnvs.height);
     }

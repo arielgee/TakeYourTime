@@ -5,7 +5,8 @@ let globals = (function() {
 
     return {
         GEO_LOCATION_NOT_SET: "_geoLocationNotSet_",
-        URL_WHO_LIFE_EXPECTANCY_DATA: "/data/WHO2016data.json",
+		URL_WHO_LIFE_EXPECTANCY_DATA: "/data/WHO2016data.json",
+		ICONIZED_PROGRESS_BAR_ID_NOT_SET: "_iconizedProgressBarIdNotSet_",
     }
 })();
 
@@ -36,7 +37,7 @@ let utils = (function() {
 
 		let dateVal = new Date(value);
 
-		return (/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value) &&
+		return (/^\d{4}-\d{2}-\d{2}$/.test(value) &&
 				dateVal !== undefined &&
 				!isNaN(dateVal) &&
 				(dateVal instanceof Date));
