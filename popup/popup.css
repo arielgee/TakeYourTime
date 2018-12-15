@@ -2,17 +2,19 @@
   --progress-bar-height: 12px;
   --progress-bar-padding: 3px;
   --footer-height: 45px;
+  --button-size: 45px;
+  --button-img-size: 16px;
 
   --background-color: rgb(60, 60, 62);          /* #505050;*/
   --background-color-diff: rgb(85, 85, 85);
   --background-color-hover: rgb(74, 74, 74);
 
   --background-color-options-not-set: rgb(179, 179, 179);
-  --color-options-not-set: rgb(194, 0, 0);
+  --color-options-not-set: hsl(0, 100%, 38%);
   --border-color: rgb(102, 102, 107);
   --text-color: rgb(240, 240, 240);
 
-  --progress-bar-text-line-height: 17px;
+  --progress-bar-line-height: 17px;
 }
 
 body {
@@ -23,6 +25,8 @@ body {
   font-family: Tahoma, Sans;
   font-size: 13.2px;
   font-weight: normal;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 .header {
@@ -48,12 +52,35 @@ body {
 }
 
 .footer .button {
-  width: 45px;
-  border:none;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
+  width: var(--button-size);
+  border: none;
+}
+
+.footer .button .imgButton {
+  width: var(--button-img-size);
+  height: var(--button-img-size);
+  margin: calc( (var(--button-size) - var(--button-img-size)) / 2 );
   filter: invert(60%);
+}
+
+#btnRefresh > .imgButton {
+  background: transparent url("../icons/refresh.svg") no-repeat center/100%;
+}
+
+#btnPreferences > .imgButton {
+  background: transparent url("../icons/gear-wheel.svg") no-repeat center/100%;
+}
+
+.button:hover {
+  background-color: var(--background-color-hover);
+}
+
+.button:hover > .imgButton {
+  filter: invert(100%);
+}
+
+.button:active {
+	filter: invert(100%);
 }
 
 #version {
@@ -61,56 +88,64 @@ body {
   color: rgb(153, 153, 153);
 }
 
-#btnRefresh {
-  background-image: url("../icons/refresh.svg");
-}
-
-#btnPreferences {
-  background-image: url("../icons/preferences.svg");
-}
-
-.button:hover {
-  background-color: var(--background-color-hover);
-  filter: invert(0%);
-}
-
-.button:active {
-	filter: invert(100%);
-}
-
 .progressBarContainer {
   padding: 10px 20px;
   outline: 0 dotted #ffffff;
   outline-offset: -5px;
+  cursor: pointer;
 }
 
-.progressBarTexts {
+.progressBarLine {
   display: flex;
   justify-content: space-between;
-  line-height: var(--progress-bar-text-line-height);
+  line-height: var(--progress-bar-line-height);
 }
 
-.progressBarTexts > .progressBarName {
+.progressBarLine > .progressBarTitle {
   max-width: 700px;
   white-space: nowrap;
 	overflow: hidden;
   text-overflow: ellipsis;
+  padding-right: 8px;
 }
 
-.progressBarTexts > .progressBarValue {
-  padding-left: 20px;
+.progressBarLine .checkMarkImg,
+.progressBarLine .btnProgressPreference,
+.progressBarLine > .spacer {
+  height: var(--progress-bar-line-height);
+  width: var(--progress-bar-line-height);
 }
 
-.progressBarTexts .checkMarkImg {
-  height: var(--progress-bar-text-line-height);
-  width: var(--progress-bar-text-line-height);
+.progressBarLine .checkMarkImg {
   background: transparent url("../icons/check-mark.svg") no-repeat center/100%;
-  display: none;
-  margin: 0 auto 0 8px;
+  visibility: hidden;
 }
 
-.progressBarContainer.iconized .checkMarkImg {
-  display: block;
+.progressBarLine .btnProgressPreference {
+  background: transparent url("../icons/gear-wheel.svg") no-repeat center/100%;
+  filter: invert(60%);
+  visibility: hidden;
+}
+
+.progressBarLine > .spacer {
+  margin: 0 auto;
+}
+
+.progressBarContainer.iconized .checkMarkImg,
+.progressBarContainer:hover .btnProgressPreference {
+  visibility: visible;
+}
+
+.progressBarLine > .btnProgressPreference:hover {
+  filter: invert(100%);
+}
+
+.progressBarLine > .btnProgressPreference:active {
+	filter: invert(0%);
+}
+
+.progressBarLine .progressBarValue {
+  padding-left: 8px;
 }
 
 .progressBar {
@@ -137,6 +172,7 @@ body {
   line-height: 8pt;
   white-space: nowrap;
   text-align: center;
+  text-shadow: white 0 0 5px;
 }
 
 .progressBar > .notSetTextInner > .notSetTextImg,
@@ -150,7 +186,7 @@ body {
 }
 
 .progressBar > .notSetTextInner > .optionsImg {
-  background: transparent url("../icons/preferences.svg") no-repeat center/100%;
+  background: transparent url("../icons/gear-wheel.svg") no-repeat center/100%;
 }
 
 .progressBar.optionsNotSet {

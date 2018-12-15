@@ -2,6 +2,7 @@
 
 let preferences = (function() {
 
+    let m_elmVersionLabel;
     let m_elmBtnRefresh;
     let m_elmBtnPreferences;
 
@@ -11,6 +12,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onDOMContentLoaded() {
 
+        m_elmVersionLabel = document.getElementById("version");
         m_elmBtnRefresh = document.getElementById("btnRefresh");
         m_elmBtnPreferences = document.getElementById("btnPreferences");
 
@@ -20,10 +22,15 @@ let preferences = (function() {
             elm.addEventListener("click", onClickProgressBarContainer);
         });
 
+        document.querySelectorAll(".progressBarLine > .btnProgressPreference").forEach((elm, key, parent) => {
+            elm.addEventListener("click", onClickProgressBarPreference, true);
+        });
+
+        m_elmVersionLabel.addEventListener("dblclick", onDbClickVersion, true);
         m_elmBtnRefresh.addEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.addEventListener("click", onClickPreferences, true);
 
-        document.getElementById("version").textContent = "v" + browser.runtime.getManifest().version;
+        m_elmVersionLabel.textContent = "v" + browser.runtime.getManifest().version;
 
         refreshProgressBars();
 
@@ -43,6 +50,11 @@ let preferences = (function() {
             elm.removeEventListener("click", onClickProgressBarContainer);
         });
 
+        document.querySelectorAll(".progressBarLine > .btnProgressPreference").forEach((elm, key, parent) => {
+            elm.removeEventListener("click", onClickProgressBarPreference);
+        });
+
+        m_elmVersionLabel.removeEventListener("dblclick", onDbClickVersion, true);
         m_elmBtnRefresh.removeEventListener("click", onClickRefresh, true);
         m_elmBtnPreferences.removeEventListener("click", onClickPreferences, true);
     }
@@ -50,114 +62,169 @@ let preferences = (function() {
     ////////////////////////////////////////////////////////////////////////////////////
     function refreshProgressBars() {
 
-        let details;
         let now = new Date();
-        let millisecInDay = 86400000;
-        let millisecInYear = 31536000000;       // ignoring leap years
-
 
         // +++ Day
-        prefs.getDayStart().then((start) => {
-            prefs.getDayEnd().then((end) => {
-                details = {
-                    total: (end - start) * 60,                                  // minutes in day
-                    elapsed: (now.getHours() - start) * 60 + now.getMinutes(),  // minutes elapsed
-                };
-                setProgressBar(document.getElementById("pBarDay"), details);
-            })
+        calcDayProgress(now).then((result) => {
+            setProgressBar(document.getElementById("pBarDay"), result.percentage);
         });
 
         // +++ Month
-        details = {
-            total: (new Date(now.getFullYear(), now.getMonth(), 0)).getDate() * 24,    // hours in this month
-            elapsed: ((now.getDate() - 1) * 24) + now.getHours(),                      // hours elapsed
-        };
-        setProgressBar(document.getElementById("pBarMonth"), details);
+        calcMonthProgress(now).then((result) => {
+            setProgressBar(document.getElementById("pBarMonth"), result.percentage);
+        });
 
         // +++ Year
-        details = {
-            total: (isLeapYear(now.getFullYear()) ? 366 : 365),                                  // days in this year
-            elapsed: Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / millisecInDay),    // days elapsed
-        };
-        setProgressBar(document.getElementById("pBarYear"), details);
+        calcYearProgress(now).then((result) => {
+            setProgressBar(document.getElementById("pBarYear"), result.percentage);
+        });
 
         // +++ Life
-        prefs.getGeoLocation().then((geoLocation) => {
-            prefs.getDateOfBirth().then((dateOfBirth) => {
-
-                if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
-
-                    prefs.getGender().then((gender) => {
-                        utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
-
-                            let whoData = JSON.parse(jsonText);
-                            let nodes = getLifeExpectancyNode(geoLocation, whoData);
-                            let years = Object.getOwnPropertyDescriptor(nodes[0], gender);
-
-                            details = {
-                                total: years.value,                                                     // expectancy years
-                                elapsed: Math.floor((now - new Date(dateOfBirth)) / millisecInYear),    // years elapsed - ignoring leap years
-                            };
-                            setProgressBar(document.getElementById("pBarLife"), details);
-                        });
-                    });
-
-                } else {
-                    setProgressBar(document.getElementById("pBarLife"));
-                }
-            });
+        calcLifeProgress(now).then((result) => {
+            setProgressBar(document.getElementById("pBarLife"), result.percentage);
         });
 
         // +++ User
-        prefs.getUserProgressBar().then((checked) => {
+        calcUserProgress(now).then((result) => {
+            setProgressBar(document.getElementById("pBarUser"), result.percentage, result.title);
+        }).catch(() => { /* rejected due to no user progress displayed */ });
+    }
 
-            document.getElementById("userProgressBarContainer").style.display = (checked ? "block" : "none");
+    ////////////////////////////////////////////////////////////////////////////////////
+    function calcDayProgress(now) {
 
-            if(checked) {
+        return new Promise((resolve) => {
 
-                prefs.getUserTitle().then((title) => {
-                    prefs.getUserStartDate().then((startDate) => {
-                        prefs.getUserEndDate().then((endDate) => {
+            prefs.getDayStart().then((start) => {
+                prefs.getDayEnd().then((end) => {
+                    let total =  (end - start) * 60;                                  // minutes in day
+                    let elapsed =  (now.getHours() - start) * 60 + now.getMinutes();  // minutes elapsed
+                    let percentage = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
 
-                            if(title !== "" && utils.isValidDate(startDate) && utils.isValidDate(endDate) && endDate > startDate) {
-
-                                details = {
-                                    total: ((new Date(endDate)) - (new Date(startDate))) / millisecInDay,   // days in range
-                                    elapsed: (now - new Date(startDate)) / millisecInDay,                   // days elapsed
-                                };
-                            } else {
-                                details = null;
-                            }
-                            setProgressBar(document.getElementById("pBarUser"), details, title);
-                        });
-                    });
-                });
-            }
+                    resolve({ percentage: percentage });
+                })
+            });
         });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
-    function setProgressBar(elmProgressBar, details, name = undefined) {
+    function calcMonthProgress(now) {
+
+        return new Promise((resolve) => {
+
+            let total = (new Date(now.getFullYear(), now.getMonth(), 0)).getDate() * 24;    // hours in this month
+            let elapsed = ((now.getDate() - 1) * 24) + now.getHours();                      // hours elapsed
+            let percentage = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+
+            resolve({ percentage: percentage });
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function calcYearProgress(now) {
+
+        return new Promise((resolve) => {
+
+            let total = (isLeapYear(now.getFullYear()) ? 366 : 365);                                            // days in this year
+            let elapsed = Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / globals.MILLISEC_IN_DAY);     // days elapsed
+            let percentage = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+
+            resolve({ percentage: percentage });
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function calcLifeProgress(now) {
+
+        return new Promise((resolve) => {
+
+            prefs.getGeoLocation().then((geoLocation) => {
+                prefs.getDateOfBirth().then((dateOfBirth) => {
+
+                    if(geoLocation !== globals.GEO_LOCATION_NOT_SET && utils.isValidBirthDate(dateOfBirth)) {
+
+                        prefs.getGender().then((gender) => {
+                            utils.getJsonTextData(globals.URL_WHO_LIFE_EXPECTANCY_DATA).then((jsonText) => {
+
+                                let whoData = JSON.parse(jsonText);
+                                let nodes = getLifeExpectancyNode(geoLocation, whoData);
+                                let years = Object.getOwnPropertyDescriptor(nodes[0], gender);
+
+                                let total = years.value;                                                            // expectancy years
+                                let elapsed = Math.floor((now - new Date(dateOfBirth)) / globals.MILLISEC_IN_YEAR); // years elapsed - ignoring leap years
+                                let percentage = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+
+                                resolve({ percentage: percentage });
+                            });
+                        });
+
+                    } else {
+                        resolve({ percentage: null });
+                    }
+                });
+            });
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function calcUserProgress(now) {
+
+        return new Promise((resolve, reject) => {
+
+            prefs.getUserProgressBar().then((checked) => {
+
+                document.getElementById("userProgressBarContainer").style.display = (checked ? "block" : "none");
+
+                if(checked) {
+
+                    prefs.getUserTitle().then((title) => {
+                        prefs.getUserStartDate().then((startDate) => {
+                            prefs.getUserEndDate().then((endDate) => {
+
+                                let percentage;
+
+                                if(title !== "" && utils.isValidDate(startDate) && utils.isValidDate(endDate) && endDate > startDate) {
+
+                                    let total = ((new Date(endDate)) - (new Date(startDate))) / globals.MILLISEC_IN_DAY;   // days in range
+                                    let elapsed = (now - new Date(startDate)) / globals.MILLISEC_IN_DAY;                   // days elapsed
+                                    percentage = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+                                } else {
+                                    percentage = null;
+                                }
+                                resolve({ percentage: percentage, title: title });
+                            });
+                        });
+                    });
+                } else {
+                    reject();
+                }
+            });
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function setProgressBar(elmProgressBar, percentage, title = undefined) {
+
 
         if(elmProgressBar) {
 
-            if(name !== undefined) {
-                let elmName = elmProgressBar.querySelector(".progressBarTexts > .progressBarName");
-                elmName.textContent = name;
+            if(title !== undefined) {
+                let elmTitle = elmProgressBar.querySelector(".progressBarLine > .progressBarTitle");
+                elmTitle.textContent = title;
             }
 
-            let elmValue = elmProgressBar.querySelector(".progressBarTexts > .progressBarValue");
+            let elmValue = elmProgressBar.querySelector(".progressBarLine > .progressBarValue");
             let elmInner = elmProgressBar.querySelector(".progressBar > .progressBarInner");
             let elmPrgBar = elmProgressBar.querySelector(".progressBar");
 
-            if(details === undefined || details === null) {
+            if(percentage === undefined || percentage === null) {
                 elmPrgBar.classList.add("optionsNotSet");
                 elmValue.textContent = "-";
                 elmInner.style.width = "0%";
                 setTimeout(() => utils.blinkElement(m_elmBtnPreferences, 200, 2000), 750);
             } else {
                 elmPrgBar.classList.remove("optionsNotSet");
-                elmValue.textContent = elmInner.style.width = Math.min(Math.max(Math.round(details.elapsed * 100 / details.total), 0), 100) + "%";
+                elmValue.textContent = elmInner.style.width = percentage + "%";
             }
         }
     }
@@ -220,6 +287,26 @@ let preferences = (function() {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
+    function onClickProgressBarPreference(event) {
+
+        event.stopPropagation();
+
+        browser.runtime.openOptionsPage().then(() => {
+
+            setTimeout(() => {
+                browser.runtime.sendMessage({progressBarId: event.target.parentElement.parentElement.id});
+                window.close();
+            }, 100);
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function onDbClickVersion(event) {
+        if(event.shiftKey) {
+            browser.runtime.reload();
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////////
     function onClickRefresh(event) {
         refreshProgressBars();
     }
@@ -227,6 +314,7 @@ let preferences = (function() {
     ////////////////////////////////////////////////////////////////////////////////////
     function onClickPreferences(event) {
         browser.runtime.openOptionsPage();
+        window.close();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +338,7 @@ let preferences = (function() {
             prefs.setIconizedProgressBarId(elmPBarContainer.id);
 
             iconDetails = { imageData: createPercentageImage(elmPBarContainer.querySelector(".progressBarValue").textContent) };
-            titleDetails = { title: "Take Your Time - " + elmPBarContainer.querySelector(".progressBarName").textContent };
+            titleDetails = { title: "Take Your Time - " + elmPBarContainer.querySelector(".progressBarTitle").textContent };
         }
 
         browser.browserAction.setIcon(iconDetails);

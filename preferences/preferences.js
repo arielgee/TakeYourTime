@@ -2,6 +2,8 @@
 
 let preferences = (function() {
 
+	const FX_DELAY_MILLISEC = 500;
+
 	let m_elmDayStart;
 	let m_elmDayEnd;
 	let m_elmGeoLocation;
@@ -16,6 +18,7 @@ let preferences = (function() {
 	let m_elmBtnReloadExtension;
 	let m_elmBtnRestoreDefaults;
 
+	browser.runtime.onMessage.addListener(onMessage);
 	document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
 	window.addEventListener("unload", onUnload);
 
@@ -112,13 +115,13 @@ let preferences = (function() {
 		gettingGeoLocation.then((value) => {
 			creatingSelect.then(() => {
 				m_elmGeoLocation.value = value;
-				setTimeout(() => flashGeoLocationElement(), 500);
+				setTimeout(() => flashGeoLocationElement(), FX_DELAY_MILLISEC);
 			});
 		});
 
 		prefs.getDateOfBirth().then((value) => {
 			m_elmDateOfBirth.value = value;
-			setTimeout(() => flashDateOfBirthElement(), 500);
+			setTimeout(() => flashDateOfBirthElement(), FX_DELAY_MILLISEC);
 		});
 
 		prefs.getGender().then((value) => {
@@ -127,11 +130,12 @@ let preferences = (function() {
 
 		prefs.getUserProgressBar().then((value) => {
 			m_elmUserProgressBar.checked = value;
-			utils.disableElementTree(m_elmUserTitle.parentElement.parentElement, !value);
-			utils.disableElementTree(m_elmUserStartDate.parentElement.parentElement, !value);
-			utils.disableElementTree(m_elmUserEndDate.parentElement.parentElement, !value);
-			setTimeout(() => flashDateElement(m_elmUserStartDate), 500);
-			setTimeout(() => flashDateElement(m_elmUserEndDate), 500);
+			document.querySelectorAll(".preference.user.subPref").forEach((elm, key,parent) => {
+				utils.disableElementTree(elm, !value);
+			});
+
+			setTimeout(() => flashDateElement(m_elmUserStartDate), FX_DELAY_MILLISEC);
+			setTimeout(() => flashDateElement(m_elmUserEndDate), FX_DELAY_MILLISEC);
 		});
 
 		prefs.getUserTitle().then((value) => {
@@ -150,6 +154,30 @@ let preferences = (function() {
 	//==================================================================================
 	//=== Event Listeners
 	//==================================================================================
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onMessage(request, sender, sendResponse) {
+
+		let selector;
+		switch (request.progressBarId) {
+			case "pBarDay":
+				selector = ".preference.day";
+				break;
+
+			case "pBarLife":
+				selector = ".preference.life";
+				break;
+
+			case "pBarUser":
+				selector = ".preference.user";
+				break;
+		}
+
+		document.querySelectorAll(selector).forEach((elm, key,parent) => {
+			setTimeout(() => elm.style.backgroundColor = "rgb(255,165,0, 0.5)", FX_DELAY_MILLISEC/2);
+			setTimeout(() => elm.style.backgroundColor = "", FX_DELAY_MILLISEC + 2500);
+		});
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeDayStart(event) {
@@ -220,9 +248,9 @@ let preferences = (function() {
 		let checked = m_elmUserProgressBar.checked;
 
 		prefs.setUserProgressBar(checked);
-		utils.disableElementTree(m_elmUserTitle.parentElement.parentElement, !checked);
-		utils.disableElementTree(m_elmUserStartDate.parentElement.parentElement, !checked);
-		utils.disableElementTree(m_elmUserEndDate.parentElement.parentElement, !checked);
+		document.querySelectorAll(".preference.user.subPref").forEach((elm, key,parent) => {
+			utils.disableElementTree(elm, !checked);
+		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +267,7 @@ let preferences = (function() {
 
 			if(newTitle.length === 0) {
 				m_elmUserTitle.value = oldTitle;
+				flashTitleElement();
 			} else {
 				m_elmUserTitle.value = newTitle;		// trimmed
 				prefs.setUserTitle(newTitle);

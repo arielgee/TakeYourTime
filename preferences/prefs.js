@@ -15,6 +15,7 @@ let prefs = (function() {
 	const PREF_DEF_USER_END_DATE_VALUE = "";
 	const PREF_DEF_ICONIZED_PROGRESS_BAR_ID_VALUE = globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET;
 
+
 	const PREF_DAY_START_KEY = "pref_dayStart";
 	const PREF_DAY_END_KEY = "pref_dayEnd";
 	const PREF_GEO_LOCATION_KEY = "pref_geoLocation";
@@ -215,6 +216,7 @@ let prefs = (function() {
 		obj[PREF_ICONIZED_PROGRESS_BAR_ID_KEY] = value;
 		browser.storage.local.set(obj);
 	}
+
 
 	//////////////////////////////////////////////////////////////////////
 	function restoreDefaults() {

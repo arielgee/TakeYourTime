@@ -217,3 +217,7 @@ input[type="text"].disabled  {
   outline-offset: 0;
   transition: outline-width 100ms linear 0s;
 }
+
+.preference {
+  transition: background-color .5s ease-in;
+}
