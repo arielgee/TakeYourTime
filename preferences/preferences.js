@@ -1,6 +1,6 @@
 "use strict";
 
-let preferences = (function() {
+let preferences = (function () {
 
 	const FX_DELAY_MILLISEC = 500;
 
@@ -96,11 +96,11 @@ let preferences = (function() {
 		prefs.getDayStart().then((startHour) => {
 
 			m_elmDayStart.value = startHour;
-			createSelectHoursElements(m_elmDayEnd, parseInt(startHour)+1, 24);
+			createSelectHoursElements(m_elmDayEnd, parseInt(startHour) + 1, 24);
 
 			prefs.getDayEnd().then((endHour) => {
 
-				if(endHour >= parseInt(startHour)+1 && endHour <= 24) {
+				if (endHour >= parseInt(startHour) + 1 && endHour <= 24) {
 					m_elmDayEnd.value = endHour;
 				} else {
 					m_elmDayEnd.value = 24;
@@ -130,7 +130,7 @@ let preferences = (function() {
 
 		prefs.getUserProgressBar().then((value) => {
 			m_elmUserProgressBar.checked = value;
-			document.querySelectorAll(".preference.user.subPref").forEach((elm, key,parent) => {
+			document.querySelectorAll(".preference.user.subPref").forEach((elm, key, parent) => {
 				utils.disableElementTree(elm, !value);
 			});
 
@@ -160,22 +160,14 @@ let preferences = (function() {
 
 		let selector;
 		switch (request.progressBarId) {
-			case "pBarDay":
-				selector = ".preference.day";
-				break;
-
-			case "pBarLife":
-				selector = ".preference.life";
-				break;
-
-			case "pBarUser":
-				selector = ".preference.user";
-				break;
+			case "pBarDay":		selector = ".preference.day";	break;
+			case "pBarLife":	selector = ".preference.life";	break;
+			case "pBarUser":	selector = ".preference.user";	break;
 		}
 
-		document.querySelectorAll(selector).forEach((elm, key,parent) => {
-			setTimeout(() => elm.style.backgroundColor = "rgb(255,165,0, 0.5)", FX_DELAY_MILLISEC/2);
-			setTimeout(() => elm.style.backgroundColor = "", FX_DELAY_MILLISEC + 2500);
+		document.querySelectorAll(selector).forEach((elm, key, parent) => {
+			elm.style.backgroundColor = "rgb(255,165,0, 0.5)";
+			setTimeout(() => elm.style.backgroundColor = "", 2500);
 		});
 	}
 
@@ -189,7 +181,7 @@ let preferences = (function() {
 
 		createSelectHoursElements(m_elmDayEnd, dayEndFromValue, 24);
 
-		if(oldDayEndValue >= dayEndFromValue && oldDayEndValue <= 24) {
+		if (oldDayEndValue >= dayEndFromValue && oldDayEndValue <= 24) {
 			m_elmDayEnd.value = oldDayEndValue;
 		} else {
 			m_elmDayEnd.value = 24;
@@ -215,7 +207,7 @@ let preferences = (function() {
 
 		prefs.getDateOfBirth().then((value) => {
 
-			if(utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
+			if (utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
 				prefs.setDateOfBirth(m_elmDateOfBirth.value);
 			} else {
 				m_elmDateOfBirth.value = value;
@@ -227,11 +219,11 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onKeyUpDateOfBirth(event) {
 
-		if(event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(m_elmDateOfBirth.value)) {
+		if (event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.value += "-";
 		}
 
-		if(utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
+		if (utils.isValidBirthDate(m_elmDateOfBirth.value) || m_elmDateOfBirth.value === "") {
 			prefs.setDateOfBirth(m_elmDateOfBirth.value);
 		}
 		flashDateOfBirthElement();
@@ -248,7 +240,7 @@ let preferences = (function() {
 		let checked = m_elmUserProgressBar.checked;
 
 		prefs.setUserProgressBar(checked);
-		document.querySelectorAll(".preference.user.subPref").forEach((elm, key,parent) => {
+		document.querySelectorAll(".preference.user.subPref").forEach((elm, key, parent) => {
 			utils.disableElementTree(elm, !checked);
 		});
 	}
@@ -265,7 +257,7 @@ let preferences = (function() {
 
 			let newTitle = m_elmUserTitle.value.trim();
 
-			if(newTitle.length === 0) {
+			if (newTitle.length === 0) {
 				m_elmUserTitle.value = oldTitle;
 				flashTitleElement();
 			} else {
@@ -280,7 +272,7 @@ let preferences = (function() {
 
 		let elm = event.target;
 
-		if(event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(elm.value)) {
+		if (event.key >= "0" && event.key <= "9" && /^\d{4}(-\d{2})?$/.test(elm.value)) {
 			elm.value += "-";
 		}
 		flashDateElement(elm);
@@ -291,13 +283,13 @@ let preferences = (function() {
 
 		prefs.getUserStartDate().then((startValue) => {
 
-			if(utils.isValidDate(m_elmUserStartDate.value) || m_elmUserStartDate.value === "") {
+			if (utils.isValidDate(m_elmUserStartDate.value) || m_elmUserStartDate.value === "") {
 
 				prefs.setUserStartDate(m_elmUserStartDate.value);
 
 				prefs.getUserEndDate().then((endValue) => {
 
-					if(endValue !== "" && (new Date(endValue)) <= (new Date(m_elmUserStartDate.value))) {
+					if (endValue !== "" && (new Date(endValue)) <= (new Date(m_elmUserStartDate.value))) {
 						prefs.setUserEndDate(m_elmUserEndDate.value = "");
 						flashDateElement(m_elmUserEndDate);
 					}
@@ -314,7 +306,7 @@ let preferences = (function() {
 
 		prefs.getUserEndDate().then((value) => {
 
-			if(utils.isValidDate(m_elmUserEndDate.value) || m_elmUserEndDate.value === "") {
+			if (utils.isValidDate(m_elmUserEndDate.value) || m_elmUserEndDate.value === "") {
 				prefs.setUserEndDate(m_elmUserEndDate.value);
 			} else {
 				m_elmUserEndDate.value = value;
@@ -358,7 +350,7 @@ let preferences = (function() {
 
 		let selected = m_elmGeoLocation.options[m_elmGeoLocation.selectedIndex];
 
-		if(selected === undefined || selected.value === prefs.PREF_DEF_GEO_LOCATION_VALUE) {
+		if (selected === undefined || selected.value === prefs.PREF_DEF_GEO_LOCATION_VALUE) {
 			m_elmGeoLocation.classList.add("flash");
 		} else {
 			m_elmGeoLocation.classList.remove("flash");
@@ -368,7 +360,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function flashDateOfBirthElement() {
 
-		if(!utils.isValidBirthDate(m_elmDateOfBirth.value)) {
+		if (!utils.isValidBirthDate(m_elmDateOfBirth.value)) {
 			m_elmDateOfBirth.classList.add("flash");
 		} else {
 			m_elmDateOfBirth.classList.remove("flash");
@@ -378,7 +370,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function flashTitleElement() {
 
-		if(m_elmUserTitle.value.trim().length === 0) {
+		if (m_elmUserTitle.value.trim().length === 0) {
 			m_elmUserTitle.classList.add("flash");
 		} else {
 			m_elmUserTitle.classList.remove("flash");
@@ -388,7 +380,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function flashDateElement(elm) {
 
-		if(!utils.isValidDate(elm.value)) {
+		if (!utils.isValidDate(elm.value)) {
 			elm.classList.add("flash");
 		} else {
 			elm.classList.remove("flash");
@@ -402,13 +394,13 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function createSelectHoursElements(elm, nFrom, nTo) {
 
-		while(elm.firstChild) {
+		while (elm.firstChild) {
 			elm.removeChild(elm.firstChild);
 		}
 
 		let elmOption;
 
-		for (let idx = nFrom; idx <= nTo ; idx++) {
+		for (let idx = nFrom; idx <= nTo; idx++) {
 			elmOption = createTagOption(idx, idx.toString().padStart(2, "0") + ":00");
 			elm.appendChild(elmOption);
 		}
@@ -423,7 +415,7 @@ let preferences = (function() {
 
 		return new Promise((resolve) => {
 
-			while(m_elmGeoLocation.firstChild) {
+			while (m_elmGeoLocation.firstChild) {
 				m_elmGeoLocation.removeChild(m_elmGeoLocation.firstChild);
 			}
 
@@ -445,38 +437,38 @@ let preferences = (function() {
 		});
 	}
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    function createSelectGeoLocationElement(whoData) {
+	////////////////////////////////////////////////////////////////////////////////////
+	function createSelectGeoLocationElement(whoData) {
 
 		let node, name;
 		let elmOption;
 		let specialItems = ["Global", "Region"];
 
-        for(let n in whoData) {
+		for (let n in whoData) {
 
-            if(!whoData.hasOwnProperty(n)) {
-                continue;
-            }
+			if (!whoData.hasOwnProperty(n)) {
+				continue;
+			}
 
-            node = whoData[n];
+			node = whoData[n];
 
-            if (typeof node === 'object') {
+			if (typeof node === 'object') {
 
-                if(node.hasOwnProperty("name")) {
+				if (node.hasOwnProperty("name")) {
 
 					// only nodes with values
-					if(node.bothSexes !== "-") {
+					if (node.bothSexes !== "-") {
 
 						name = node.name;
 
 						elmOption = createTagOption(name, (specialItems.some(el => new RegExp("\\b" + el + "\\b").test(name)) ? "[ " + name + " ]" : name));
 						m_elmGeoLocation.appendChild(elmOption);
 					}
-                } else {
-                    createSelectGeoLocationElement(node);
-                }
+				} else {
+					createSelectGeoLocationElement(node);
+				}
 			}
-        }
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

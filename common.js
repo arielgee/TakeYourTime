@@ -1,20 +1,20 @@
 "use strict";
 
 /***************************************/
-let globals = (function() {
+let globals = (function () {
 
-    return {
-        GEO_LOCATION_NOT_SET: "_geoLocationNotSet_",
+	return {
+		GEO_LOCATION_NOT_SET: "_geoLocationNotSet_",
 		URL_WHO_LIFE_EXPECTANCY_DATA: "/data/WHO2016data.json",
 		ICONIZED_PROGRESS_BAR_ID_NOT_SET: "_iconizedProgressBarIdNotSet_",
-        MILLISEC_IN_DAY: 86400000,
+		MILLISEC_IN_DAY: 86400000,
 		MILLISEC_IN_YEAR: 31536000000,       // ignoring leap years
-    }
+	}
 })();
 
 
 /***************************************/
-let utils = (function() {
+let utils = (function () {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function getJsonTextData(url) {
@@ -32,7 +32,7 @@ let utils = (function() {
 			};
 			xhr.send();
 		});
-    }
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function isValidDate(value) {
@@ -40,9 +40,9 @@ let utils = (function() {
 		let dateVal = new Date(value);
 
 		return (/^\d{4}-\d{2}-\d{2}$/.test(value) &&
-				dateVal !== undefined &&
-				!isNaN(dateVal) &&
-				(dateVal instanceof Date));
+			dateVal !== undefined &&
+			!isNaN(dateVal) &&
+			(dateVal instanceof Date));
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -55,8 +55,8 @@ let utils = (function() {
 
 		elm.style.opacity = (elm.style.opacity ^ 1).toString();		// bitwise flip
 
-		if(duration > 0) {
-			setTimeout(() => blinkElement(elm, interval, duration-interval), interval);
+		if (duration > 0) {
+			setTimeout(() => blinkElement(elm, interval, duration - interval), interval);
 		} else {
 			elm.style.opacity = "1";
 		}
@@ -84,11 +84,11 @@ let utils = (function() {
 		}
 	};
 
-    return {
+	return {
 		getJsonTextData: getJsonTextData,
 		isValidDate: isValidDate,
 		isValidBirthDate: isValidBirthDate,
 		blinkElement: blinkElement,
 		disableElementTree: disableElementTree,
-    }
+	}
 })();

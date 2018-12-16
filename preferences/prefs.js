@@ -1,6 +1,6 @@
 "use strict";
 
-let prefs = (function() {
+let prefs = (function () {
 
 	// user preferences
 

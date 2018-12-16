@@ -3,12 +3,12 @@
 
   <defs>
     <linearGradient id="grdUp" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%"  stop-color="#ffffff00" stop-opacity="1" />
-        <stop offset="85%" stop-color="#ffffffff" stop-opacity="1" />
+      <stop offset="0%"  stop-color="#ffffff00" stop-opacity="1" />
+      <stop offset="85%" stop-color="#ffffffff" stop-opacity="1" />
     </linearGradient>
     <linearGradient id="grdDown" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="20%" stop-color="#ffffffff" stop-opacity="1" />
-        <stop offset="100%" stop-color="#ffffff00" stop-opacity="1" />
+      <stop offset="20%" stop-color="#ffffffff" stop-opacity="1" />
+      <stop offset="100%" stop-color="#ffffff00" stop-opacity="1" />
     </linearGradient>
   </defs>
 

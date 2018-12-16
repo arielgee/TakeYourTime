@@ -219,5 +219,5 @@ input[type="text"].disabled  {
 }
 
 .preference {
-  transition: background-color .5s ease-in;
+  transition: background-color 1s ease-out;
 }
