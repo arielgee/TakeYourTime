@@ -1,5 +1,5 @@
 {
-  "description": "The 'Your Life' progress bar is calculated using the data from the 2015 World Health Statistics published by the Global Health Observatory (GHO) in 2016 - Life expectancy at birth for geographic location.",
+  "description": "The 'Your Life' progress bar calculation is based on the World Health Organization (WHO) 2015 statistics published by the Global Health Observatory (GHO) in 2016 – Life expectancy at birth by geographic location.",
   "source": "http://who.int/entity/gho/publications/world_health_statistics/2016/en/index.html",
   "data": [
     {
