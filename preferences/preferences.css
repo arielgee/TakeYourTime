@@ -34,7 +34,7 @@ body {
 
 .preference.subPref,
 .preference.subPref + .prefSeperator {
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .preferenceControl {

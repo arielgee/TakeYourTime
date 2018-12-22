@@ -156,19 +156,13 @@ let preferences = (function () {
 	//==================================================================================
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onMessage(request, sender, sendResponse) {
+	function onMessage(request, sender) {
 
-		let selector;
-		switch (request.progressBarId) {
-			case "pBarDay":		selector = ".preference.day";	break;
-			case "pBarLife":	selector = ".preference.life";	break;
-			case "pBarUser":	selector = ".preference.user";	break;
+		switch (request.msgId) {
+			case globals.MSG_PREF_HIGHLIGHT_PREFERENCE:
+				highlightPreference(request.progressBarId);
+				break;
 		}
-
-		document.querySelectorAll(selector).forEach((elm, key, parent) => {
-			elm.style.backgroundColor = "rgb(255,165,0, 0.5)";
-			setTimeout(() => elm.style.backgroundColor = "", 2500);
-		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -189,17 +183,20 @@ let preferences = (function () {
 			setTimeout(() => m_elmDayEnd.style.outlineWidth = "0", 2500);
 		}
 		prefs.setDayEnd(m_elmDayEnd.value);
+		browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeDayEnd(event) {
 		prefs.setDayEnd(m_elmDayEnd.value);
+		browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeGeoLocation(event) {
 		prefs.setGeoLocation(m_elmGeoLocation.value);
 		flashGeoLocationElement();
+		browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -213,6 +210,7 @@ let preferences = (function () {
 				m_elmDateOfBirth.value = value;
 			}
 			flashDateOfBirthElement();
+			browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 		});
 	}
 
@@ -232,6 +230,7 @@ let preferences = (function () {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeGender(event) {
 		prefs.setGender(m_elmGender.value);
+		browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -243,11 +242,21 @@ let preferences = (function () {
 		document.querySelectorAll(".preference.user.subPref").forEach((elm, key, parent) => {
 			utils.disableElementTree(elm, !checked);
 		});
+
+		if(!checked) {
+			prefs.getIconizedProgressBarId().then((id) => {
+				if(id === globals.HTMLID_ELEMENT_USER) {
+					prefs.setIconizedProgressBarId(globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET);
+					browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_START_REFRESH_INTERVAL });
+				}
+			});
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onKeyUpUserTitle(event) {
 		flashTitleElement();
+		browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -264,6 +273,7 @@ let preferences = (function () {
 				m_elmUserTitle.value = newTitle;		// trimmed
 				prefs.setUserTitle(newTitle);
 			}
+			browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 		});
 	}
 
@@ -298,6 +308,7 @@ let preferences = (function () {
 				m_elmUserStartDate.value = startValue;
 			}
 			flashDateElement(m_elmUserStartDate);
+			browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 		});
 	}
 
@@ -312,6 +323,7 @@ let preferences = (function () {
 				m_elmUserEndDate.value = value;
 			}
 			flashDateElement(m_elmUserEndDate);
+			browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 		});
 	}
 
@@ -339,6 +351,27 @@ let preferences = (function () {
 
 		flashGeoLocationElement();
 		flashDateOfBirthElement();
+	}
+
+	//==================================================================================
+	//=== message handlers functions
+	//==================================================================================
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function highlightPreference(progressBarId) {
+
+		let selector;
+
+		switch (progressBarId) {
+			case globals.HTMLID_ELEMENT_DAY:	selector = ".preference.day";	break;
+			case globals.HTMLID_ELEMENT_LIFE:	selector = ".preference.life";	break;
+			case globals.HTMLID_ELEMENT_USER:	selector = ".preference.user";	break;
+		}
+
+		document.querySelectorAll(selector).forEach((elm, key, parent) => {
+			elm.style.backgroundColor = "rgb(255,165,0, 0.5)";
+			setTimeout(() => elm.style.backgroundColor = "", 3000);
+		});
 	}
 
 	//==================================================================================
