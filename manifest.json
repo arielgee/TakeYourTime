@@ -38,7 +38,11 @@
   },
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "common.js",
+      "preferences/prefs.js",
+      "background.js"
+    ]
   },
 
   "options_ui": {
