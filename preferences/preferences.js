@@ -251,6 +251,8 @@ let preferences = (function () {
 				}
 			});
 		}
+		flashDateElement(m_elmUserStartDate);
+		flashDateElement(m_elmUserEndDate);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -419,7 +421,7 @@ let preferences = (function () {
 	////////////////////////////////////////////////////////////////////////////////////
 	function flashDateElement(elm) {
 
-		if (!utils.isValidDate(elm.value)) {
+		if (!utils.isValidDate(elm.value) && !elm.disabled) {
 			elm.classList.add("flash");
 		} else {
 			elm.classList.remove("flash");
