@@ -344,13 +344,19 @@ let preferences = (function () {
 		m_elmGeoLocation.value = defPrefs.geoLocation;
 		m_elmDateOfBirth.value = defPrefs.dateOfBirth;
 		m_elmGender.value = defPrefs.gender;
-		m_elmUserProgressBar.value = defPrefs.userProgressBar;
+		m_elmUserProgressBar.checked = defPrefs.userProgressBar;
 		m_elmUserTitle.value = defPrefs.userTitle;
 		m_elmUserStartDate.value = defPrefs.userStartDate;
 		m_elmUserEndDate.value = defPrefs.userEndDate;
 
+		document.querySelectorAll(".preference.user.subPref").forEach((elm, key, parent) => {
+			utils.disableElementTree(elm, !defPrefs.userProgressBar);
+		});
+
 		flashGeoLocationElement();
 		flashDateOfBirthElement();
+		flashDateElement(m_elmUserStartDate);
+		flashDateElement(m_elmUserEndDate);
 	}
 
 	//==================================================================================
