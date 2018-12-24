@@ -95,7 +95,7 @@ let preferences = (function () {
 
 			if(id !== globals.ICONIZED_PROGRESS_BAR_ID_NOT_SET) {
 
-				setProgressBarIconizeCheckMark(id);
+				setProgressBarIconizeCheckMark(id, false);
 				// Make sure both displays are synchronized (popup & iconized)
 				browser.runtime.sendMessage({ msgId: globals.MSG_BKGD_REFRESH_BROWSER_ACTION_ICON });
 			}
@@ -200,10 +200,10 @@ let preferences = (function () {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function setProgressBarIconizeCheckMark(id) {
+	function setProgressBarIconizeCheckMark(id, flip = true) {
 
 		document.querySelectorAll(".progressBarContainer").forEach((elm, key, parent) => {
-			if(elm.id !== id || elm.classList.contains("iconized")) {
+			if(elm.id !== id || (flip && elm.classList.contains("iconized"))) {
 				elm.classList.remove("iconized");
 			} else {
 				elm.classList.add("iconized");
