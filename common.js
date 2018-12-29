@@ -58,7 +58,7 @@ let calculator = (function () {
 				prefs.getDayEnd().then((end) => {
 					let total = (end - start) * 60;                                  // minutes in day
 					let elapsed = (now.getHours() - start) * 60 + now.getMinutes();  // minutes elapsed
-					let percent = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+					let percent = presentationalPercentageRounding(elapsed * 100 / total);
 
 					resolve({ percent: percent, title: "Your Day" });
 				})
@@ -73,7 +73,7 @@ let calculator = (function () {
 
 			let total = (new Date(now.getFullYear(), now.getMonth(), 0)).getDate() * 24;    // hours in this month
 			let elapsed = ((now.getDate() - 1) * 24) + now.getHours();                      // hours elapsed
-			let percent = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+			let percent = presentationalPercentageRounding(elapsed * 100 / total);
 
 			resolve({ percent: percent, title: "Your Month" });
 		});
@@ -86,7 +86,7 @@ let calculator = (function () {
 
 			let total = (isLeapYear(now.getFullYear()) ? 366 : 365);                                            // days in this year
 			let elapsed = Math.ceil((now - (new Date(now.getFullYear(), 0, 1))) / globals.MILLISEC_IN_DAY);     // days elapsed
-			let percent = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+			let percent = presentationalPercentageRounding(elapsed * 100 / total);
 
 			resolve({ percent: percent, title: "Your Year" });
 		});
@@ -111,7 +111,7 @@ let calculator = (function () {
 
 								let total = years.value;                                                            // expectancy years
 								let elapsed = Math.floor((now - new Date(dateOfBirth)) / globals.MILLISEC_IN_YEAR); // years elapsed - ignoring leap years
-								let percent = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+								let percent = presentationalPercentageRounding(elapsed * 100 / total);
 
 								resolve({ percent: percent, title: "Your Life" });
 							});
@@ -139,8 +139,8 @@ let calculator = (function () {
 						if (title !== "" && utils.isValidDate(startDate) && utils.isValidDate(endDate) && endDate > startDate) {
 
 							let total = ((new Date(endDate)) - (new Date(startDate))) / globals.MILLISEC_IN_DAY;   // days in range
-							let elapsed = (now - new Date(startDate)) / globals.MILLISEC_IN_DAY;                   // days elapsed
-							percent = Math.min(Math.max(Math.round(elapsed * 100 / total), 0), 100);
+							let elapsed = (now - (new Date(startDate))) / globals.MILLISEC_IN_DAY;                   // days elapsed
+							percent = presentationalPercentageRounding(elapsed * 100 / total);
 						} else {
 							percent = null;
 						}
@@ -178,6 +178,19 @@ let calculator = (function () {
 			}
 		}
 		return nodes;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// For presentational reasons percentages between 0-1 and between 99-100 are rounded to 1 and 100 respectively.
+	function presentationalPercentageRounding(percent) {
+
+		if (percent > 0.0 && percent < 1.0) {
+			return 1;
+		} else if (percent > 99.0 && percent < 100.0) {
+			return 99;
+		} else {
+			return Math.min(Math.max(Math.round(percent), 0), 100);
+		}
 	}
 
 	return {
