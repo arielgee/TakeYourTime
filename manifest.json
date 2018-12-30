@@ -8,8 +8,9 @@
   },
 
   "name": "Take Your Time",
-  "version": "1.0",
-  "description": "Four progress bars to check out your progress and see how your time is running out.\n\nThe ongoing progress of your day, month, year and even your entire life are displayed as progress bars to help you evaluate the time you wasted and appreciate the time you still have.\n\nYour remaining life is calculated (with some simple configuration) using the \"Life expectancy at birth\" statistics of the World Health Organization (WHO).\n\nInspired by Andrey Azimov's \"Progress Bar OSX\".",
+  "version": "1.0.1",
+  "description": "Gives you four progress bars to check out your progress and see how your time is running out.",
+  //"full_description": "Gives you four progress bars to check out your progress and see how your time is running out.\n\nThe ongoing progress of your day, month, year and even your entire life are displayed as progress bars to help you evaluate the time you wasted and appreciate the time you still have.\n\nYour remaining life is calculated (with some simple configuration) using the \"Life expectancy at birth\" statistics of the World Health Organization (WHO).\n\nInspired by Andrey Azimov's \"Progress Bar OSX\".",
   "author": "arielg",
 
   "permissions": [
