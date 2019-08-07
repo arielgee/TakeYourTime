@@ -39,6 +39,12 @@ let preferences = (function () {
 		m_elmBtnReloadExtension = document.getElementById("btnReloadExtension");
 		m_elmBtnRestoreDefaults = document.getElementById("btnRestoreDefaults");
 
+		utils.getBrowserVersion().then((version) => {
+			if(version >= "68.0") {
+				document.body.classList.add("noCaptionStyleV68");
+			}
+		});
+
 		addEventListeners();
 		getSavedPreferences();
 	}

@@ -325,6 +325,15 @@ let utils = (function () {
 		browser.browserAction.setTitle(titleDetails);
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function getBrowserVersion() {
+		return new Promise((resolve) => {
+			browser.runtime.getBrowserInfo().then((result) => {
+				resolve(result.version);
+			});
+		});
+	}
+
 	return {
 		getJsonTextData: getJsonTextData,
 		isValidDate: isValidDate,
@@ -333,6 +342,7 @@ let utils = (function () {
 		disableElementTree: disableElementTree,
 		getPercentImageData: getPercentImageData,
 		setBrowserActionDetails: setBrowserActionDetails,
+		getBrowserVersion: getBrowserVersion,
 	}
 
 })();

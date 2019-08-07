@@ -19,6 +19,11 @@ body {
   margin-bottom: 35px;
 }
 
+body.noCaptionStyleV68 .caption,
+body.noCaptionStyleV68 .caption + .prefSeperator {
+	display: none;
+}
+
 .prefSeperator {
   border-bottom: 1px solid lightgray;
 }
