@@ -37,6 +37,15 @@
     "default_popup": "popup/popup.html"
   },
 
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F5"
+      },
+      "description": "Open popup"
+    }
+  },
+
   "background": {
     "scripts": [
       "common.js",
