@@ -122,7 +122,7 @@ input[type="text"] {
 	width: 50px;
 }
 
-.numericInput:invalid  {
+.numericInput:invalid {
 	box-shadow: 0 0 1.5px 1px rgb(255, 0, 0);
 }
 
