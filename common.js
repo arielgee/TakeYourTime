@@ -19,7 +19,7 @@ let globals = (function () {
 		WEB_EXT_NAME: manifest.name,
 		WEB_EXT_VERSION: manifest.version,
 		GEO_LOCATION_NOT_SET: "_geoLocationNotSet_",
-		URL_WHO_LIFE_EXPECTANCY_DATA: "/data/WHO2016data.json",
+		URL_WHO_LIFE_EXPECTANCY_DATA: "/data/WHO2019data.json",
 		ICONIZED_PROGRESS_BAR_ID_NOT_SET: "_iconizedProgressBarIdNotSet_",
 		MILLISEC_IN_MINUTE: 60000,
 		MILLISEC_IN_DAY: 86400000,
