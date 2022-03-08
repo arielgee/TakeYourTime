@@ -1,7 +1,55 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
 :root {
-	--lizard-preference-height: 40px;
+	--preference-height: 40px;
+
+	--color-control-focused: rgb(10, 133, 255);
+
+	--color-control-accent: rgb(0, 96, 223);
+	--background-color-input: rgb(121, 121, 121);
+
+	/*******************light theme colors*******************/
+	--foreground-color: rgb(0, 0, 0);
+	--background-color-body: transparent;
+	--background-color-select-control: transparent;
+	--background-color-option-control: transparent;
+	--foreground-color-help-info: rgb(255, 255, 255);
+	--background-color-help-info: rgb(187, 187, 187);
+	--background-color-hover-help-info: rgb(42, 67, 100);
+	--background-color-input-control: rgb(229, 229, 229); /*rgb(255, 255, 255);*/
+	--foreground-color-disabled-control: rgb(169, 169, 169);
+	--background-color-disabled-control: rgb(211, 211, 211);
+
+	--background-color-button: 6, 6, 5;
+	--background-alpha-button: 0.1;
+	--background-alpha-hover-button: 0.15;
+	--background-alpha-hover-active-button: 0.2;
+
+	--color-flash: rgb(255, 192, 192);
+}
+
+@media (prefers-color-scheme: dark) {
+
+	:root {
+		/********************dark theme colors*******************/
+		--foreground-color: rgb(249, 249, 250);
+		--background-color-body: rgb(35, 34, 43);
+		--background-color-select-control: rgb(50, 50, 54);
+		--background-color-option-control: rgb(43, 42, 51);
+		--foreground-color-help-info: rgb(0, 0, 0);
+		--background-color-help-info: rgb(92, 92, 92);
+		--background-color-hover-help-info: rgb(192, 192, 192);
+		--background-color-input-control: var(--background-color-select-control);
+		--foreground-color-disabled-control: rgb(127, 127, 127);
+		--background-color-disabled-control: rgb(72, 72, 72);
+
+		--background-color-button: 249, 249, 250;
+		--background-alpha-button: 0.1;
+		--background-alpha-hover-button: 0.15;
+		--background-alpha-hover-active-button: 0.2;
+
+		--color-flash: rgb(255, 88, 88);
+	}
 }
 
 body {
@@ -12,6 +60,8 @@ body {
 	max-width: 700px;
 	line-height: 21px;
 	white-space: nowrap;
+	color: var(--foreground-color);
+	background-color: var(--background-color-body);
 }
 
 .caption {
@@ -25,16 +75,16 @@ body.noCaptionStyleV68 .caption + .prefSeperator {
 }
 
 .prefSeperator {
-	border-bottom: 1px solid lightgray;
+	border-bottom: 1px solid rgb(211, 211, 211);
 }
 
 .preference {
 	display: flex;
 	justify-content: space-between;
 	padding: 9px 3px;
-	height: var(--lizard-preference-height);
-	min-height: var(--lizard-preference-height);
-	max-height: var(--lizard-preference-height);
+	height: var(--preference-height);
+	min-height: var(--preference-height);
+	max-height: var(--preference-height);
 }
 
 .preference.subPref,
@@ -63,67 +113,71 @@ body.noCaptionStyleV68 .caption + .prefSeperator {
 
 select {
 	border: 1px solid #7a7a7a;
+	color: var(--foreground-color);
+	background-color: var(--background-color-select-control);
 }
 
-input[type="radio"],
+select:focus {
+	border-color: var(--color-control-focused);
+	box-shadow: 0 0 2.5px 1px var(--color-control-focused);
+	background-color: var(--background-color-select-control);
+}
+
+select > option {
+	background-color: var(--background-color-option-control);
+}
+
 input[type="checkbox"] {
-	-webkit-appearance: none;
+	--button-width: 36px;
+	--button-height: 18px;
+	--dot-margin: 4px;
+	--dot-size: calc(var(--button-height) - 2*var(--dot-margin));
+	--dot-transform-x: calc(var(--button-width) - 2*var(--dot-margin) - var(--dot-size));
+
 	-moz-appearance: none;
 	appearance: none;
-	background-color: transparent;
 	padding: 0;
 	margin: 2px 0;
-	width: 18px;
-	height: 18px;
-	border: 2px solid #999;
-	transition: 0.2s all linear;
 	outline: none;
+	box-sizing: border-box;
+	width: var(--button-width);
+	height: var(--button-height);
+	border-radius: calc(var(--button-height) / 2);
+	color: var(--foreground-color);
+	background-color: var(--background-color-input);
 }
-
-input[type="radio"] {
-	border-radius: 50%;
-}
-
-input[type="radio"]:checked,
 input[type="checkbox"]:checked {
-	border: 5px solid #999;
-	background-color: black;
+	background-color: var(--color-control-accent);
+}
+input[type="checkbox"]:disabled {
+	background-color: var(--background-color-disabled-control);
+}
+input[type="checkbox"]:focus {
+	box-shadow: 0 0 2.5px 2px var(--color-control-focused);
 }
 
-input[type="color"] {
-	width: 25px;
-	height: 18px;
-	border: none;
-	margin: 2px 3px;
-	padding: 1px;
-	background-color: transparent;
-	cursor: pointer;
-}
-
-input[type="color"]::-moz-color-swatch {
-	border: none;
+input[type="checkbox"]::before {
+	display: block;
+	content: "";
+	background-color: #ffffff;
+	height: var(--dot-size);
+	width: var(--dot-size);
+	margin: var(--dot-margin);
 	border-radius: 50%;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.6);
+	transition: transform 100ms;
 }
-
-input[type="color"]::-moz-focus-inner {
-	padding: 0;
+input[type="checkbox"]:checked::before {
+	transform: translateX(var(--dot-transform-x));
+}
+input[type="checkbox"]:disabled::before {
+	background-color: var(--foreground-color-disabled-control);
 }
 
 input[type="text"] {
-	background-color: #e5e5e5;
+	color: var(--foreground-color);
+	background-color: var(--background-color-input-control);
 	border: 1px solid #7a7a7a;
-}
-
-.numericInput {
-	border: 1px solid #7a7a7a;
-	padding: 2px;
-	height: 21px;
-	width: 50px;
-}
-
-.numericInput:invalid {
-	box-shadow: 0 0 1.5px 1px rgb(255, 0, 0);
+	padding: 0 2px;
 }
 
 .helpInfo {
@@ -131,8 +185,8 @@ input[type="text"] {
 	border-radius: 50%;
 	height: 18px;
 	width: 18px;
-	background-color: #bbbbbb;
-	color: #ffffff;
+	background-color: var(--background-color-help-info);
+	color: var(--foreground-color-help-info);
 	font-family: "Open Sans",X-LocaleSpecific,sans-serif;
 	font-size: 14px;
 	font-weight: 700;
@@ -144,12 +198,13 @@ input[type="text"] {
 }
 
 .helpInfo:hover {
-	background-color: #2a4364;
+	background-color: var(--background-color-hover-help-info);
 }
 
 .controlButton {
 	padding: 1px 3px;
-	background-color: rgb(251, 251, 251);
+	color: var(--foreground-color);
+	background-color: rgba(var(--background-color-button), var(--background-alpha-button));
 	border: 1px solid rgb(193, 193, 193);
 	border-radius: 2px;
 	height: 30px;
@@ -159,11 +214,11 @@ input[type="text"] {
 }
 
 .controlButton:hover {
-	background-color: rgb(235, 235, 235);
+	background-color: rgba(var(--background-color-button), var(--background-alpha-hover-button));
 }
 
 .controlButton:active:hover {
-	background-color: rgb(218, 218, 218);
+	background-color: rgba(var(--background-color-button), var(--background-alpha-hover-active-button));
 }
 
 .annotation {
@@ -180,7 +235,7 @@ select,
 #userTitle,
 #userStartDate,
 #userEndDate {
-	background: linear-gradient(to left, transparent 50%, rgb(255, 192, 192) 50%);
+	background: linear-gradient(to left, transparent 50%, var(--color-flash) 50%);
 	background-size: 200% 100%;
 	background-position: right bottom;
 	transition: background-position 0.2s ease-in 0s;
@@ -203,18 +258,17 @@ select.flash,
 /* Disabled elements */
 label.disabled,
 input[type="radio"].disabled,
-input[type="checkbox"].disabled,
-input[type="text"].disabled  {
-	color: darkgray;
-	border-color: darkgray;
+input[type="text"].disabled {
+	color: var(--foreground-color-disabled-control);
+	border-color: var(--foreground-color-disabled-control);
 }
 
-/*  because this element is selected to 'flash' I need to overwrite the background color */
+/* because this element is selected to 'flash' I need to overwrite the background color */
 #dateOfBirth,
 #userTitle,
 #userStartDate,
 #userEndDate {
-	background-color: #e5e5e5;
+	background-color: var(--background-color-input-control);
 }
 
 #dayEnd {
