@@ -3,7 +3,7 @@
   "applications": {
     "gecko": {
       "id": "TakeYourTime@webExtension.arielg.il",
-      "strict_min_version": "57.0"
+      "strict_min_version": "59.0"
     }
   },
 
